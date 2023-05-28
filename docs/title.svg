@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<svg viewBox="0 -20 150 40" xwidth="150" xheight="40" xstyle="border : 1px solid silver" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"
+  >
+
+<style type="text/css"><![CDATA[
+line { stroke: white; stroke-width: 0.5; }
+text { fill : white; text-anchor : left ; dominant-baseline : middle ; font-size : 18px }
+]]></style>
+
+<text x="10" y="2">SVG-Plotter</text>
+<line x1="3" x2="3" y1="-12" y2="12" />
+
+</svg>

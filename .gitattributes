@@ -1,0 +1,9 @@
+* text=auto
+*.bat text eol=crlf
+*.css text eol=crlf
+*.htm text eol=crlf
+*.js text eol=crlf
+*.sh text eol=lf
+*.svg text eol=crlf*.jpg -text
+*.jpg -text
+*.png -text
