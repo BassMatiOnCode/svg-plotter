@@ -53,29 +53,30 @@ table[algorithm] tbody[calculations] th {
 <p>Multiple y-axes for multiple graphs</p>
 <p>A three-dimensional graph</p>
 
-<h2 cbc>SVG Views</h2><div>
-
-<!--h2--></div>
-
 <h2 cbc>About Coordinate Systems</h2><div>
 
 <p>The space of an SVG image is inherently two-dimesional. It is defined by the SVG element's <tt>viewBox</tt> attribute:</p>
 
 <pre>&lt;svg viewBox = "-100, -100, 300, 300" ...</pre>
 
-<p>These values definje the coordinates of the upper left corner xMin and yMin, width and height of the diagram. These values inherently define the location of the origin (0,0) in the image as well as xMax and yMax:</p>
+<p>These values define the coordinates of the upper left corner xMin and yMin, width and height of the diagram. These values inherently define the location of the origin (0,0) in the image as well as xMax and yMax:</p>
 
-<pre>
-x<sub>min</sub> = viewBox.x = -100
-x<sub>max</sub> = viewBox.width + viewBox.x = 300 - 100 = 200 
-y<sub>min</sub> = viewBox.y = -100
-y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200 
-</pre>
+<div class="math"><div><math display="block">
+<mtable rows-separated left-aligned><mtr><mtd>
+	<mi>xMin</mi><mo>=</mo><mi>viewBox.x</mi><mo>=</mo><mn>&minus;100</mn>
+</mtd></mtr><mtr><mtd>
+	<mi>xMax</mi><mo>=</mo><mi>viewBox.width</mi><mo>+</mo><mi>viewBox.x</mi><mo>=</mo><mn>300</mn><mo>&minus;</mo><mn>100</mn><mo>=</mo><mn>200</mn> 
+</mtd></mtr><mtr><mtd>
+	<mi>yMin</mi><mo>=</mo><mi>viewBox.y</mi><mo>=</mo><mn>&minus;100</mn>
+</mtd></mtr><mtr><mtd>
+	<mi>yMax</mi><mo>=</mo><mi>viewBox.height</mi><mo>=</mo><mi>viewBox.y</mi><mo>=</mo><mn>300</mn><mo>&minus;</mo><mn>100</mn><mo>=</mo><mn>200</mn> 
+</mtd></mtr></mtable>
+</math></div></div>
 
 <p>Note that the viewbox origin is always at viewbox coordinates (0,0):</p>
 
 <figure><figcaption class="figure">Coordinates in SVG space</figcaption>
-<svg width="300" height="300" viewBox="-100,-100,300,300" boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="overflow:visible">
+<svg width="300" height="300" viewBox="-100,-100,300,300" boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" overflow="visible" style="margin-top:10px">
 
 <g name="axes" stroke="black" marker-end="url(#arrowHead)">
 	<line x1="-100" x2="+200" y1="0" y2="0"/>
@@ -90,19 +91,32 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <g name="axis-labels" stroke="none" fill="black">
 	<text x="190" y="15">x</text>
 	<text x="-15" y="190">y</text>
-	<text x="-100" y="-12">-100</text>
+	<g transform="translate(-100,-12)">
+		<rect x="-20" y="-12" width="40" height="20" fill="white"/>	
+		<text>-100</text>
+		</g>
 	<text x="-50" y="-12">-50</text>
 	<text x="50" y="-12">50</text>
 	<text x="100" y="-12">100</text>
 	<text x="150" y="-12">150</text>
-	<text x="200" y="-12">200</text>
+	<g transform="translate(200,-12)">
+		<rect x="-20" y="-12" width="40" height="20" fill="white"/>	
+		<text>200</text>
+		</g>
 	<g text-anchor="start">
-		<text x="10" y="-100">-100</text>
+		<g transform="translate(10,-100)">
+			<rect x="-2" y="-12" width="40" height="20" fill="white"/>	
+			<text>-100</text>
+			</g>
 		<text x="10" y="-50">-50</text>
 		<text x="10" y="50">50</text>
 		<text x="10" y="100">100</text>
 		<text x="10" y="150">150</text>
 		<text x="10" y="200">200</text>
+		<g transform="translate(10,200)">
+			<rect x="-2" y="-12" width="40" height="20" fill="white"/>	
+			<text>200</text>
+			</g>
 		
 		</g>
 	</g>
@@ -110,10 +124,12 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <circle name="origin-marker" r="5" fill="white" stroke="black"/>
 </svg></figure> <!--Coordinates in SVG space-->
 
-<p>Now let's make things complicated. The figure above suggest that the viewbox axes represent the axes x and y of a function graph. But in fact, they don't. One indicator is that the y axis goes from top to bottom, which is unusual, kind of. To understand the matter, let's consider a typical third dimension axis named "z". Such an axis is usually angled at 45 degree, like so: </p>
+<p>Now let's make things complicated. The figure above suggest that the viewbox axes represent the axes x and y of a function graph. But in fact, they don't. One indicator is that the y axis goes from top to bottom, which is unusual, kind of. Secondly, the viewbox axes are invisible. In the diagrams presented here, I added some SVG code to make them visible. The tickmarks and their lables should give some guidance and orientation in the viewbox space.</p>
 
-<figure><figcaption class="figure">Coordinates in SVG space</figcaption>
-<svg width="300" height="300" viewBox="-100,-100,300,300" boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="overflow:visible">
+<p>Let's create an angled axis named "z": </p>
+
+<figure><figcaption class="figure">Angled axis</figcaption>
+<svg width="300" height="300" viewBox="-100,-100,300,300" boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" overflow="visible" style="margin-top:10px">
 
 <g name="axes" stroke="black" marker-end="url(#arrowHead)">
 	<line x1="-100" x2="+200" y1="0" y2="0"/>
@@ -130,23 +146,37 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <g name="axis-labels" stroke="none" fill="black">
 	<text x="190" y="15">x</text>
 	<text x="-15" y="190">y</text>
-	<text x="-100" y="-12">-100</text>
+	<g transform="translate(-100,-12)">
+		<rect x="-20" y="-12" width="40" height="20" fill="white"/>
+		<text>-100</text>
+		</g>
 	<text x="-50" y="-12">-50</text>
 	<text x="50" y="-12">50</text>
 	<text x="100" y="-12">100</text>
 	<text x="150" y="-12">150</text>
-	<text x="200" y="-12">200</text>
+	<g transform="translate(200,-12)">
+		<rect x="-20" y="-12" width="40" height="20" fill="white"/>
+		<text>200</text>
+		</g>
 	<g text-anchor="start">
-		<text x="10" y="-100">-100</text>
+		<g transform="translate(10,-100)">
+			<rect x="-2" y="-12" width="40" height="20" fill="white"/>
+			<text>-100</text>
+			</g>
 		<text x="10" y="-50">-50</text>
 		<text x="10" y="50">50</text>
 		<text x="10" y="100">100</text>
 		<text x="10" y="150">150</text>
 		<text x="10" y="200">200</text>
+		<g transform="translate(10,200)">
+			<rect x="-2" y="-12" width="40" height="20" fill="white"/>
+			<text>200</text>
+			</g>
 		</g>
 	</g>
 
 <g name="y-axis-labels" stroke="none" fill="green">
+	<text x="-90" y="70">z</text>
 	</g>
 
 <g name="point-labels" stroke="none" fill="black">
@@ -161,32 +191,32 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 	<circle name="P2" cx="-100" cy="100" r="5"/>
 	<circle name="origin-marker" r="5"/>
 	</g>
-</svg></figure> <!--An angled graph axis in viewbox coordinates-->
+</svg></figure> <!--Angled axis-->
 
-<p>But the axis can actually be oriented in <em>any</em> direction, and might not even go through the viewbox origin. In the following section, we will go into ways to define an axis and develop the related math equations.</p>
+<p>Note that the axis can actually be oriented in <em>any</em> direction, and might not even go through the viewbox origin. In the following section, we will go into ways to define an axis and develop the related math equations.</p>
 
 <!--h2--></div>
 
 <h2 cbc>Axis Definition in ViewBox Space</h2><div>
 
-<p>The web page author should have two methods for the definition of a coordinate system axis:</p>
+<p>The web page author should have two methods define a diagram axis:</p>
 
 <ol>
 <li>An angle and an optional reference point, which defaults to the viewbox origin (0,0)</li>
-<li>Two reference points, the second one is optional and defaults to the viewbox origin (0,0)</li>
+<li>Two reference points, the second is optional and defaults to  (0,0)</li>
 </ol>
 
-<p>The software should be able to caluclate the intersection points between axis line and viewbox border, as well as the axis length in viewbox units</p>
+<p>The software should be able to caluclate the intersection points between axis line and viewbox border, as well as axis length in viewbox units and other transformation factors.</p>
 
 <!--h2--></div>
 
 <h2 cbc>Method 1: Angle and Reference Point</h2><div>
 
-<p>The page author supplies an angle and an optional reference point. To keep things simple, we assume the default reference point, the viewbox coordinate system origin O (0,0)).</p>
+<p>The page author supplies an angle and an optional reference point. To keep things simple, we assume the default reference point, the viewbox coordinate system origin O at (0,0)).</p>
 
-<p>The angle is measured counter-clockwise between the viewbox x axis and the graph axis. To draw the axis line, we need to find the coordinates of intersection points (P1, P2) between the line and the viewbox borders:</p>
+<p>The angle is measured counter-clockwise between the viewbox x axis and the graph axis. To draw the axis line, we need to find the coordinates of intersection points (P1, P2) between line and viewbox borders:</p>
 
-<figure><figcaption class="figure">Coordinates of the intersection points</figcaption>
+<figure><figcaption class="figure">Intersection point coordinates</figcaption>
 <svg width="350" height="300" viewBox="-150,-100,350,300" boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="overflow:visible ; margin-top:20px">
 
 <g name="axes" stroke="black" marker-end="url(#arrowHead)">
@@ -224,9 +254,9 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 	<circle name="x2" cx="100" cy="0" r="5"/>
 	<circle name="origin-marker" r="5"/>
 	</g>
-</svg></figure> <!--Coordinates of the intersection points-->
+</svg></figure> <!--Intersection point coordinates-->
 
-<p>As we can see, the coordinates of P1 and P2 in this example are determined by the angle &alpha; and the length of the viewbox axes legs, xMin and yMin. In fact, we have to treat each viewbox coordinate system quadrant separately, and also each part of the graph axis line (<math><mi overline>P1 O</mi></math> and <math><mi overline>O P2</mi></math>).</p>
+<p>They are determined by the angle &alpha; and the length of the viewbox axes legs, xMin, xMax, yMin and yMax. We will have to treat each coordinate system quadrant and each axis line leg (<math><mi overline>P1 O</mi></math> and <math><mi overline>O P2</mi></math>) separately.</p>
 
 <p>Let's begin with the first quadrant in the upper right corner.</p>
 
@@ -243,20 +273,35 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <g name="arrows" stroke="green" fill="none">
 	<line name="axis-line" x1="-20" y1="7.28" x2="330" y2="-120.11" stroke="green"/>
 	<line name="axis-line" x1="-20" y1="16.78" x2="190.68" y2="-160.00"/>
-	<path d="M 50 0 A 50 50 20 0 0 46.98 -18.20 M 40 0 A 40 40 60 0 0 30.64 -25.71" fill="none"/>
-	<g fill="white">
+	</g>
+
+<g name="angle-arcs" stroke="green" fill="none" marker-end="url(#angleHead)">
+	<path d="M 50 0 A 50 50 20 0 0 46.98 -18.20"/>
+	<path d="M 40 0 A 40 40 60 0 0 30.64 -25.71"/>
+	</g>
+
+<g name="points" stroke="black" fill="white">
 	<circle name="P1" cx="330" cy="-120.11" r="5"/>
 	<circle name="x1" cx="0" cy="-120.11" r="5"/>
 	<circle name="ymax" cx="0" cy="-160" r="5"/>
 	<circle name="P2" cx="190.68" cy="-160.00" r="5"/>
 	<circle name="x2" cx="190.68" cy="0" r="5"/>
 	<circle name="xxmax" cx="330" cy="0" r="5"/>
-	</g></g>
+	</g>
 
 <g name="point-lables">
-	<text x="-8" y="-160" text-anchor="end">ymax</text>
-	<text x="-8" y="-120.11" text-anchor="end">y1</text>
-	<text x="330" y="20">xmax</text>
+	<g transform="translate(-10,-160)">
+		<rect x="-42"y="-10" width="42" height="20" fill="white"/>	
+		<text text-anchor="end">yMax</text>
+		</g>
+	<g transform="translate(-10,-120.11)">
+		<rect x="-42"y="-10" width="42" height="20" fill="white"/>	
+		<text text-anchor="end">y1</text>
+		</g>
+	<g transform="translate(330,20)">
+		<rect x="-25"y="-10" width="50" height="20" fill="white"/>	
+		<text>xMax</text>
+		</g>
 	<text x="190.68" y="20">x2</text>
 	<text x="338" y="-120.11" text-anchor="start">P1</text>
 	<text x="190.68" y="-175">P2</text>
@@ -274,36 +319,44 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 
 </svg></figure> <!--Lines in the first quadrant -->
 
-<p>As we can see, depending on the angle &alpha; we have two different situations:</p>
+<p>The figure above indicates that we have two different situations:</p>
 
 <ol>
-<li>The line intersects the right viewbox border at P1</li>
-<li>The line intersects the upper viewbox border at P2</li>
+<li>The line intersects with the right viewbox border at P1</li>
+<li>The line intersects with the upper viewbox border at P2</li>
 </ol>
 
-<p>The angle &alpha; and the viewbox properties <span symbol>xMax</span>, <span symbol>xMin</span> determine which of these alternatives apply.</p>
+<p>The angle &alpha; and the viewbox properties <span symbol>xMax</span>, <span symbol>xMin</span> determine which of these alternatives applies.</p>
 
-<p>We will use the tangens relation for our calculations:</p>
+<p>We will use the trigonometric tangens relation for our calculations:</p>
 
 <div class="math"><div><math display="block">
 <mtext>(1)&emsp;</mtext>
 <mo>tan</mo><mi>&alpha;</mi><mo>=</mo><mfrac><mi>y</mi><mi>x</mi></mfrac>
 <mo>&emsp;&hArr;&emsp;</mo><mi>y</mi><mo>=</mo><mi>x</mi><mo>tan</mo><mi>&alpha;</mi>
 <mo>&emsp;&hArr;&emsp;</mo><mi>x</mi><mo>=</mo><mfrac><mi>y</mi><mrow><mo>tan</mo><mi>&alpha;&nbsp;</mi></mrow></mfrac>
-</math></div></div>
+</math></div></div> <!--Tangens relations-->
 
 <p>A visual help:</p>
 
 <figure><figcaption class="figure">Relationships in a right-angled triangle</figcaption>
-<svg boxed width="300" height="200" viewBox="-20,-20,300,200" text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="overflow:visible ; margin-top:5px ; padding:20px">
+<svg boxed width="300" height="200" viewBox="-20,-20,300,200" text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" overflow="visible" style="margin-top:5px ; padding:20px">
 
-<path d="M 0 160 h 260 v -160 z" fill="none" stroke="black"/>
-<path d="M 40 160 a 40 40 45 0 0 -5.93 -20" fill="none" stroke="green"/>
-<text x="50" y="145" fill="green" stroke="none">&alpha;</text>
-<text x="273" y="80" fill="black" stroke="none">y</text>
-<text x="130" y="150" fill="black" stroke="none">x</text>
-<text x="260" y="-15" fill="black" stroke="none">P1</text>
-<text x="-15" y="162" fill="black" stroke="none">O</text>
+<path name="triangle-sides" stroke="black" fill="none" d="M 0 160 h 260 v -160 z"/>
+
+<path name="angle-arcs" stroke="green" fill="none" d="M 40 160 a 40 40 45 0 0 -5.93 -20 M 260 40 a 40 40 30 0 1 -34 -19 M 260 120 a 40 40 90 0 0 -40 40"/>
+
+<g name="labels" stroke="none" fill="black">
+	<text x="50" y="145">&alpha;</text>
+	<text x="230" y="45">&beta;</text>
+	<text x="225" y="120">&gamma;</text>
+	<text x="270" y="80">y</text>
+	<text x="140" y="170">x</text>
+	<text x="260" y="-15">A</text>
+	<text x="-15" y="170">B</text>
+	<text x="260" y="180">C</text>
+	<text x="130" y="60">c</text>
+	</g>
 
 <g name="points" fill="white" stroke="black">
 	<circle cy="160" r="5" />
@@ -313,20 +366,18 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 
 </svg></figure> <!-- Relationships in a right-angled triangle -->
 
-<!--h2--></div>
+<p>So tangens &alpha; essentially is the <em>slope</em> of the line <math><mi overline>O P1</mi></math>.</p>
 
-<h2 cbc>Finding the X Coordinate</h2><div>
+<h3 cbc>Finding the X Coordinate</h3><div>
 
-<p>So tangens &alpha; essentially is the slope of the line <math><mi overline>O P1</mi></math>.</p>
-
-<p>If we want to get the x coordinate of the intersection point, we set y to &minus;yMin and solve for x:</p>
+<p>If we want to get the x coordinate of the intersection point, we set y in equation (1) to &minus;yMin and solve for x:</p>
 
 <div class="math"><div><math display="block">
 <mtext>(2)&emsp;</mtext>
 <mi>x</mi><mo>=</mo><mfrac><mi>&minus;yMin</mi><mrow><mo>tan</mo><mi>&alpha;&nbsp;</mi></mrow></mfrac>
 </math></div></div>
 
-<p>The negative of yMin must be used in order to obtain positive x values.</p>
+<p>The negative of yMin must be used in order to obtain a positive x value.</p>
 
 <p>The two situations (<math><mi overline>O P1 P1A</mi></math> and <math><mi overline>O P2</mi></math>) are illustrated more detailed in the figure below:</p>
 
@@ -373,16 +424,16 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 	<circle name="x1" cx="285" r="5"/>
 	<circle name="x2" cx="133" r="5"/>
 	</g>
-</svg></figure> <!--Lines in the first quadrant -->
+</svg></figure> <!--Getting the x coordinate -->
 
-<p>If the line intersects with the right viewbox border, we get the point P1A, outside of the viewbox, with the x-coordinate x1 &mdash; which is greater than xMax. So we must limit the x-coordinate value to xMax to find the point P1:</p>
+<p>If the line intersects with the right viewbox border, we get the point P1A with the x-coordinate x1 &mdash; which is outside of the viewbox. So we must limit the x-value to find P1:</p>
 
 <div class="math"><div><math display="block">
 <mtext>(2a)&emsp;</mtext>
 <mi>x</mi><mo>=</mo><mo>min</mo><mo fence>(</mo><mfrac><mi>&minus;yMin</mi><mrow><mo>tan</mo><mi>&alpha;&nbsp;</mi></mrow></mfrac><mo fence>, </mo><mi>xMax</mi><mo fence>)</mo><mo>=</mo><mi>xMax</mi>
 </math></div></div>
 
-<p>In case 2, the line intersects with the upper viewbox border at yMin. In this case, the solution is </p>
+<p>In case 2, the line intersects with the upper viewbox border at P2. In this case, the solution is </p>
 
 
 <div class="math"><div><math display="block">
@@ -390,20 +441,20 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <mi>x</mi><mo>=</mo><mo>min</mo><mo fence>(</mo><mfrac><mi>&minus;yMin</mi><mrow><mo>tan</mo><mi>&alpha;&nbsp;</mi></mrow></mfrac><mo fence>, </mo><mi>xMax</mi><mo fence>)</mo><mo>=</mo><mi>x2</mi>
 </math></div></div>
 
-<p>The value of x2 is less than xMax, so we can accept that.</p>
+<p>x2 is less than xMax, so we can accept that.</p>
 
-<!--h2--></div>
+<!--h3--></div>
 
-<h2 cbc>Finding the Y Coordinate</h2><div>
+<h3 cbc>Finding the Y Coordinate</h3><div>
 
-<p>Now lets find the y coordniate for a line in quadrant 1. Again, we have two situations: </p>
+<p>Now lets find the y coordinate for a line in quadrant 1. Again, we have two situations: </p>
 
 <ol>
 <li>The line intersects with the right viewbox border at P1</li>
-<li>The line inersects with the upper viewbox border at P2</li>
+<li>The line intersects with the upper viewbox border at P2</li>
 </ol>
 
-<p>This is illustrated in detail in the figure below:</p>
+<p>In detail:</p>
 
 <figure><figcaption class="figure">Quadrant 1, y coordinate</figcaption>
 <svg width="220" height="140" viewBox="-20,-100,220,140" xmax="200" ymax="100"  boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="border-color:darkgray ; overflow:visible ; margin-top:60px ; margin-left:20px ; border-bottom-style:none ; border-left-style:none">
@@ -483,27 +534,27 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 
 </svg></figure> <!-- Quadrant 1, y coordinate -->
 
-<p>We set x = &minus;xMax in equation (1) and solve for y. Negative xMax because the y-coordinates in this quadrant are negative. If the line crosses the viewbox right border at P1, we will get y1, which is greater than yMin, so we can accept the value:</p>
+<p>We set x = &minus;xMax in equation (1) and solve for y. We need a negative xMax to obtain a negative y-coordinate in this quadrant.</p>
+
+<p>If the line crosses the right viewbox border at P1, we obtain y1, which is greater than yMin, so we can accept the result:</p>
 
 <div class="math"><div><math display="block">
 <mtext>(3a)&emsp;</mtext>
 <mi>y</mi><mo>=</mo><mo>max</mo><mo fence>(</mo><mi>&minus;xMax</mi><mo>tan</mo><mi>&alpha;</mi><mo>&nbsp;,&nbsp;</mo><mi>yMin</mi><mo fence>)</mo><mo>=</mo><mi>y1</mi>
 </math></div></div>
 
-<p>NOTE that y coordinates in this quadrant are <em>negative</em>, so we must use the max() function to get the correct value.</p>
-
-<p>In the second case, the line intersects with the upper viewbox border at P2, and we get the coordinate y2 &mdash; which is less than yMax and thus must be limited:</p>
+<p>In the second case, the line intersects with the upper viewbox border, we get P2A with the coordinate y2 &mdash; which is outside of the viewbox area. So the result must be limited:</p>
 
 <div class="math"><div><math display="block">
 <mtext>(3b)&emsp;</mtext>
-<mi>y</mi><mo>=</mo><mo>max</mo><mo fence>(</mo><mi>&minus;xMax</mi><mo>tan</mo><mi>&alpha;</mi><mo>&nbsp;,&nbsp;</mo><mi>yMin</mi><mo fence>)</mo><mo>=</mo><mi>yMax</mi>
+<mi>y</mi><mo>=</mo><mo>max</mo><mo fence>(</mo><mi>&minus;xMax</mi><mo>tan</mo><mi>&alpha;</mi><mo>&nbsp;,&nbsp;</mo><mi>yMin</mi><mo fence>)</mo><mo>=</mo><mi>yMin</mi>
 </math></div></div>
 
-<!--h2--></div>
+<!--h3--></div>
 
-<h2 cbc>The Second Quadrant</h2><div>
+<h3 cbc>The Second Quadrant</h3><div>
 
-<p>The figure below shows the situation in the second quadrant. Both x and y coordinates are negative:</p>
+<p>The figure below shows the situation in the second quadrant. Here, both x and y coordinates are negative:</p>
 
 <figure><figcaption class="figure">Quadrant 2 coordinates</figcaption>
 <svg width="240" height="140" viewBox="-200,-100,240,140" xmin="200" ymin="-100"  boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="border-color:darkgray ; overflow:visible ; margin-top:60px ; margin-left:100px ; border-bottom-style:none ; border-right-style:none">
@@ -516,7 +567,12 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <g name="graph-axes" stroke="green" fill="none">
 	<line name="line-1" x1="40" y1="14" x2="-285" y2="-100" />
 	<line name="line-2" x1="40" y1="30" x2="-200" y2="-150" />
-	<path name="angles" d="M -60 0 A 60 60 19.33 0 1 -56.62 -19.86 M -50 0 A 50 50 36.87 0 1 -40 -30 M 40 0 A 40 40 144 0 0 -32 -24"/>
+	</g>
+
+<g name="angle-arcs" stroke="green" fill="none">
+	<path name="beta-1" marker-start="url(#angleHead)" d="M -60 0 A 60 60 19.33 0 1 -56.62 -19.86"/>
+	<path name="beta-2" marker-start="url(#angleHead)" d="M -50 0 A 50 50 36.87 0 1 -40 -30"/>
+	<path name="alpha" marker-end="url(#angleHead)" d="M 40 0 A 40 40 144 0 0 -32 -24"/>
 	</g>
 
 <g name="angle-names" stroke="none" fill="green">
@@ -562,7 +618,7 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 
 </svg></figure> <!-- Quadrant 2 coordinates -->
 
-<p>To keep things familiar, in the second quadrant we will work with the complimentary angle &beta;:</p>
+<p>To keep things familiar, we will work with the complimentary angle &beta;:</p>
 
 <div class="math"><div><math display="block">
 <mtext>(4)&emsp;</mtext>
@@ -588,16 +644,14 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <mi>x</mi><mo>=</mo><mo>max</mo><mo fence>(</mo><mfrac><mi>&ensp;yMin&ensp;</mi><mrow><mo>tan</mo><mi>&beta;</mi></mrow></mfrac><mo fence>, </mo><mi>xMin</mi><mo fence>)</mo><mo>=</mo><mi>x2</mi>
 </math></div></div>
 
-
 <div class="math"><div><math display="block">
 <mtext>(6b)&emsp;</mtext>
 <mi>y</mi><mo>=</mo><mo>max</mo><mo fence>(</mo><mi>xMin</mi><mo>tan</mo><mi>&beta;</mi><mo>&nbsp;,&nbsp;</mo><mi>yMin</mi><mo fence>)</mo><mo>=</mo><mi>yMin</mi>
 </math></div></div>
 
+<!--h3--></div>
 
-<!--h2--></div>
-
-<h2 cbc>The Third Quadrant</h2><div>
+<h3 cbc>The Third Quadrant</h3><div>
 
 <p>This is the situation in the third quadrant:</p>
 
@@ -614,7 +668,12 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <g name="graph-axes" stroke="green" fill="none">
 	<line name="line-1" x1="40" y1="-14" x2="-285" y2="100" />
 	<line name="line-2" x1="40" y1="-30" x2="-200" y2="150" />
-	<path name="angles" d="M -60 0 A 60 60 19.33 0 0 -56.62 19.86 M -50 0 A 50 50 36.87 0 0 -40 30 M 40 0 A 40 40 144 1 0 -32 24"/>
+	</g>
+
+<g name="angle-arcs" stroke="green" fill="none" marker-end="url(#angleHead)">
+	<path name="angles" d="M -60 0 A 60 60 19.33 0 0 -56.62 19.86"/>
+	<path name="angles" d="M -50 0 A 50 50 36.87 0 0 -40 30"/>
+	<path name="angles" d="M 40 0 A 40 40 144 1 0 -32 24"/>
 	</g>
 
 <g name="angle-names" stroke="none" fill="green">
@@ -638,7 +697,7 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 	</g>
 
 <g name="point-lables" fill="black" stroke="none">
-	<g name="yMin" transform="translate( 33, 100)">
+	<g name="yMin" transform="translate( 35, 100)">
 		<rect x="-25" y="-10" width="50" height="20"  fill="white"/>		
 		<text x="-4">yMax</text>
 		</g>
@@ -692,9 +751,9 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 
 <p>Similar to quarant 1, we have to use negative values to obtain the correctly signed results.</p>
 
-<!--h2--></div>
+<!--h3--></div>
 
-<h2 cbc>The Fourth Quadrant</h2><div>
+<h3 cbc>The Fourth Quadrant</h3><div>
 
 <p>This is the situation in the third quadrant:</p>
 
@@ -711,7 +770,12 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <g name="graph-axes" stroke="green" fill="none">
 	<line name="line-1" x1="-40" y1="-14" x2="285" y2="100" />
 	<line name="line-2" x1="-40" y1="-30" x2="200" y2="150" />
-	<path name="angles" d="M 60 0 A 60 60 19.33 0 1 56.62 19.86 M 50 0 A 50 50 36.87 0 1 40 30 M 40 0 A 40 40 144 1 0 32 24"/>
+	</g>
+
+<g name="angle-arcs" stroke="green" fill="none" marker-end="url(#angleHead)">
+	<path name="angles" d="M 56.62 19.86 A 60 60 19.33 0 0 60 0"/>
+	<path name="angles" d="M 40 30 A 50 50 36.87 0 0 50 0"/>
+	<path name="angles" d="M 40 0 A 40 40 144 1 0 32 24"/>
 	</g>
 
 <g name="angle-names" stroke="none" fill="green">
@@ -788,9 +852,9 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 <mi>y</mi><mo>=</mo><mo>min</mo><mo fence>(</mo><mi>xMax</mi><mo>tan</mo><mi>&beta;</mi><mo>&nbsp;,&nbsp;</mo><mi>xMax</mi><mo fence>)</mo><mo>=</mo><mi>yMax</mi>
 </math></div></div>
 
-<!--h2--></div>
+<!--h3--></div>
 
-<h2 cbc>Equation Summary</h2><div>
+<h3 cbc>Equation Summary</h3><div>
 
 <p>After drowning in the details, it's good to regain an overview. Below are the eight equations used to calculate the coordinates:</p>
 
@@ -861,61 +925,11 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 
 <p>Note that an axis lines has <em>two</em> legs at opposite quadrants, and each leg has to be calculated separately!</p>
 
-<!--h2--></div>
+<!--h3--></div>
 
-<h2 cbc>Length of the Axis</h2><div>
+<h3 cbc>Coordinate Calculation Test</h3><div>
 
-<p>The angled axis is obviously longer than the viewbox x and y axes:</p>
-
-<figure><figcaption class="figure">Length of the angled axis</figcaption><svg boxed width="300" height="200" viewBox="-100, -120, 300, 200" overflow="visible" text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" >
-
-<g name="viewbox-axes" stroke="black" marker-end="url(#arrowHead)">
-	<line x1="-100" x2="200" y1="0" y2="0"/>
-	<line x1="0" x2="0" y1="-120" y2="80"/>
-	</g>
-
-<line x1="-100" y1="-80" x2="200" y2="-80" stroke="grey" stroke-dasharray="4,4" />
-
-<g name="angled-axis" stroke="green" marker-end="url(#arrowHead)">
-	<line x1="200" y1="-80" x2="-100" y2="40"/>
-	</g>
-
-<g name="points" stroke="black" fill="white">
-	<circle name="origin" r="5"/>
-	<circle name="P1" cx="200" cy="-80" r="5"/>
-	<circle name="P2" cx="-100" cy="40" r="5"/>
-	<circle name="P3" cx="-100" cy="-80" r="5"/>
-
-<g name="point-labels" stroke="none" fill="black">
-	<text x="185" y="-95">P1</text>
-	<text x="210" y="-60">(200, -80)</text>
-	<text x="-85" y="55">P2</text>
-	<text x="-60" y="70">(-100, 40)</text>
-	<text x="-85" y="-95">P3</text>
-	<text x="-60" y="-60">(-100, -80)</text>
-	</g>
-</svg></figure>
-
-<p>Pythagoras, a well-respected ancient Greek, says:</p>
-
-<div class="math"><div><math display="block">
-<mtable><mtr><mtd style="text-align:left">
-	<mi overline>P1P2</mi><mo>=</mo><msqrt><mrow style="margin-top:3px">
-	<msup><mrow><mo fence>(</mo><mi>x1</mi><mo>&minus;</mo><mi>x2</mi><mo fence>)</mo></mrow><mi>2</mi></msup>
-	<mo>+</mo>
-	<msup><mrow><mo fence>(</mo><mi>y1</mi><mo>&minus;</mo><mi>y2</mi><mo fence>)</mo></mrow><mi>2</mi></msup></mrow></msqrt>
-</mtd></mtr><mtr><mtd style="padding-top:20px ;  text-align:left">
-	<mo>=</mo><msqrt><mrow style="padding-top:3px"><msup><mi>300</mi><mi>2</mi></msup><mo>+</mo><msup><mi>120</mi><mi>2</mi></msup></mrow></msqrt>
-</mtd></mtr><mtr><mtd style="padding-top:20px ; text-align:left">
-	<mo>=</mo><mn>323</mn>
-</mtd></mtr></mtable>
-</math></div></div>
-
-<p>The JavaScript <tt>Math</tt> object has a method for this purpose: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot"><tt>hypot()</tt></a> computes the root of the sum of squares of arguments.</p>
-
-<!--========================================================-->
-
-<figure style="margin-top:500px"><figcaption class="figure">20 degree axis intersection points</figcaption>
+<figure><figcaption class="figure">20 degree axis intersection points</figcaption>
 <svg id="calc-1-figure" width="500" height="300" viewBox="-200,-100,500,300" boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="overflow:visible">
 
 <g id="viewbox-axes" stroke="black">
@@ -935,8 +949,8 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 	</g>
 
 <g stroke="black" fill="white">
-	<circle id="P2" cx="275" cy="-100" r="5" />
-	<circle id="P1" cx="-200" cy="72.79" r="5" />
+	<circle id="P1" cx="-200" cy="72.79" r="5" fill="red"/>
+	<circle id="P2" cx="275" cy="-100" r="5" fill="green" />
 	</g>
 
 <g stroke="none" fill="black">
@@ -951,77 +965,58 @@ y<sub>max</sub> = viewBox.height + viewBox.y = 300 - 100 = 200
 	</g>
 </svg></figure>
 
-<div>
-<p>We need four equations, one for each side:</p>
-
-<div class="math"><div><math display="block"><mtable linebreaker><mtr><mtd>
-
-<mi>y2</mi><mo>=</mo><mi>min</mi><mo fence>(</mo><mi>yMax</mi><mo>,</mo><mi>max</mi><mo fence>(</mo><mi>yMin</mi><mo>,</mo>
-<mi>&minus;xMax</mi><mo>&sdot;</mo><mo>tan</mo><mi>&alpha;1</mi><mo fence>)</mo><mo fence>)</mo>
-
-</mtd></mtr><mtr><mtd>
-<mi>x2</mi><mo>=</mo><mi>max</mi><mo fence>(</mo><mi>xMin</mi><mo>,</mo><mi>min</mi><mo fence>(</mo><mi>xMax</mi><mo>,</mo><mi>&minus;yMin</mi><mo>&sdot;</mo><mo>cot</mo><mi>&alpha;1</mi><mo fence>)</mo><mo fence>)</mo>
-
-</mtd></mtr><mtr><mtd>
-<mi>y1</mi><mo>=</mo><mi>max</mi><mo fence>(</mo><mi>yMin</mi><mo>,</mo><mi>min</mi><mo fence>(</mo><mi>yMax</mi><mo>,</mo><mi>&minus;xMin</mi><mo>&sdot;</mo><mo>tan</mo><mi>&alpha;1</mi><mo fence>)</mo><mo fence>)</mo>
-
-</mtd></mtr><mtr><mtd>
-<mi>x1</mi><mo>=</mo><mi>min</mi><mo fence>(</mo><mi>xMax</mi><mo>,</mo><mi>max</mi><mo fence>(</mo><mi>xMin</mi><mo>,</mo><mi>&minus;yMax</mi><mo>&sdot;</mo><mo>cot</mo><mi>&alpha;1</mi><mo fence>)</mo><mo fence>)</mo>
-
-</mtd></mtr></mtable></math></div></div>
-
-<pre>
-
-</pre>
-
-<p>Let's verify that.</p>
-</div>
-
-<style>
-#calculator-1 label {
-	display : inline-block ;
-	min-width : 75px ;
-	}
-</style>
 <div class="calculator" id="calculator-1">
 	<!-- fixed values -->
-<div style="display:none">
-<label>xMin = </label><span data-get="xMin" data-member="innerText"></span><br/>
-<label>xMax = </label><span data-get="xMax" data-member="innerText"></span><br/>
-<label>yMin = </label><span data-get="yMin" data-member="innerText"></span><br/>
-<label>yMax = </label><span data-get="yMax" data-member="innerText"></span><br/>
-</div>
 	<!-- variable input -->
-<label for="angle">Angle: </label><input id="angle" type="number" data-set="alpha" data-member="value" value="20" data-exec="update"/><br/>
+<label for="angle">Angle: </label><input id="angle" type="number" min="0" max="360" data-set="alpha" data-member="value" value="20" data-exec="update"/><br/>
 	<!-- calculated values -->
-<label>x1 = </label><span data-get="x1" data-member="innerText"></span><br/>
-<label>y1 = </label><span data-get="y1" data-member="innerText"></span><br/>
-<label>x2 = </label><span data-get="x2" data-member="innerText"></span><br/>
-<label>y2 = </label><span data-get="y2" data-member="innerText"></span><br/>
-
-</div>
-
-<p id="test" name="testP"></p>
+<label>Computed &alpha; = </label><span data-get="computedAlpha" data-member="innerText"></span><label>tan &alpha; = </label><span data-get="tangensAlpha" data-member="innerText"></span><br/>
+<label>x1 = </label><span data-get="x1" data-member="innerText"></span><label>y1 = </label><span data-get="y1" data-member="innerText"></span><br/>
+<label>x2 = </label><span data-get="x2" data-member="innerText"></span><label>y2 = </label><span data-get="y2" data-member="innerText"></span><br/>
 
 <script type="module" name="calculator-1">
 
-const scope = {
-	// Defines the scope for the evaluator to find variables and functions
+	// Scope object for the evaluator
+const evaluatorScope = {
 	update : function ( ) {
-			// Adjust alpha and sign factors to the allowd range 0...90 degree
-		let s1 = 1;
-		if ( this.alpha > 90 ) {
-			s1 = -1 ;
-			this.alpha -= 90 ;
-			}
+		const rangeErrorMessage = "calculator-1:update: Angle out of range." ;
 			// Convert angle to radians
-		const a = this.alpha / 180 * Math.PI ;
-			// Calculate intersection coordinates
-		evaluator.set( "y2", Math.min(this.yMax, Math.max( this.yMin, -this.xMax * Math.tan( a ) ) ) );
-		evaluator.set( "x2", Math.max( this.xMin, Math.min( this.xMax, -this.yMin / Math.tan( a ) ) ) );
-		evaluator.set( "y1", Math.max( this.yMin, Math.min( this.yMax, -this.xMin * Math.tan( a ) ) ) );
-		evaluator.set( "x1", Math.min( this.xMax, Math.max( this.xMin, -this.yMax * s1 / Math.tan( a ) ) ) );
-		console.log( this );
+		this.alpha = +this.alpha;
+			// Each of the four quadrants may be different in size
+		if ( +this.alpha < 0 ) throw new Error( rangeErrorMessage );
+		else if ( +this.alpha < 90 ) {  // Quadrant 1
+			evaluator.set( "computedAlpha", this.alpha );
+			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
+			evaluator.set( "x1", Math.max( this.xMin, -this.yMax / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y1", Math.min( this.yMax, -this.xMin * this.tangensAlpha ).toFixed( 0 ));
+			evaluator.set( "x2", Math.min( this.xMax, -this.yMin / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y2", Math.max( this.yMin, -this.xMax * this.tangensAlpha ).toFixed( 0 ));
+			}
+		else if ( +this.alpha < 180 ) {  // Quadrant 2
+			evaluator.set( "computedAlpha", 180 - this.alpha );
+			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
+			evaluator.set( "x1", Math.min( this.xMax, this.yMax / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y1", Math.min( this.yMax, this.xMax * this.tangensAlpha ).toFixed( 0 ));
+			evaluator.set( "x2", Math.max( this.xMin, this.yMin / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y2", Math.max( this.yMin, this.xMin * this.tangensAlpha ).toFixed( 0 ));
+			}
+		else if ( +this.alpha < 270 ) {  // Quadrant 3
+			evaluator.set( "computedAlpha", this.alpha - 180 );
+			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
+			evaluator.set( "x1", Math.min( this.xMax, -this.yMin / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y1", Math.max( this.yMin, -this.xMax * this.tangensAlpha ).toFixed( 0 ));
+			evaluator.set( "x2", Math.max( this.xMin, -this.yMax / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y2", Math.min( this.yMax, -this.xMin * this.tangensAlpha ).toFixed( 0 ));
+			}
+		else if ( +this.alpha <= 360 ) {  // Quadrant 4
+			evaluator.set( "computedAlpha", 360 - this.alpha );
+			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
+			evaluator.set( "x1", Math.max( this.xMin, this.yMin / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y1", Math.max( this.yMin, this.xMin * this.tangensAlpha ).toFixed( 0 ));
+			evaluator.set( "x2", Math.min( this.xMax, this.yMax / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y2", Math.min( this.yMax, this.xMax * this.tangensAlpha ).toFixed( 0 ));
+			}
+		else throw new Error( rangeErrorMessage );
 			// Move the figure points
 		this.point1.setAttribute( "cx", this.x1 );
 		this.point1.setAttribute( "cy", this.y1 );
@@ -1033,12 +1028,14 @@ const scope = {
 	point2 : document.querySelector( "#calc-1-figure #P2" )
 	} ;
 
+	// Create the evaluator 
 import { Evaluator } from "/inc/evaluator-1.js" ;
 const evaluator = new Evaluator( { 
-	container : document.getElementById( "calculator-1" ) ,
-	scope : scope 
+	container : "calculator-1" ,
+	scope : evaluatorScope 
 	} );
 
+	// Set fixed values
 evaluator.set( "xMin", -200 );
 evaluator.set( "xMax", 300 );
 evaluator.set( "yMin", -100 );
@@ -1046,50 +1043,73 @@ evaluator.set( "yMax", 200 );
 
 </script>
 
+</div><!--Calculator 1-->
+
+<!--h3--></div>
+
 <!--h2--></div>
 
-<h2 cbc>Axix Length Calculation</h2><div>
+<h2 cbc>Method 2: Two Reference Points</h2><div>
 
-<p>The z axis above intersects the viewbox border at P1 (+100,&minus;100) and P2 (&minus;100, +100), in viewbox space coordinates. Note that the axis represents a single dimension of the function space, and is projected on the two-dimensional viewbox space.</p>
+<p>TO DO</p>
 
-<p>Question: How long is the z axis?</p>
+<!--h2--></div>
 
-<p>We can construct a rectangular triange between the points P1, P2 and P3:</p>
+<h2 cbc>Axis Length</h2><div>
 
-<figure><figcaption class="figure">Length of the z axis</figcaption>
-<svg width="300" height="300" viewBox="-100,-100,300,300" boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="overflow:visible">
+<p>The angled axis is obviously longer than the viewbox x and y axes:</p>
 
-<g name="axes" stroke="black" marker-end="url(#arrowHead)">
-	<line x1="-100" x2="+200" y1="0" y2="0"/>
-	<line x1="0" x2="0" y1="-100" y2="200"/>
-	<line x1="100" x2="-100" y1="-100" y2="100" stroke="green" marker-end="url(#arrowHead)"/>
-	</g> <!--axes-->
-	
-<g name="axis-labels" stroke="none" fill="black">
-	<text x="190" y="15">x</text>
-	<text x="-15" y="190">y</text>
+<figure><figcaption class="figure">Length of the angled axis</figcaption><svg boxed width="300" height="200" viewBox="-100, -120, 300, 200" overflow="visible" text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" >
+
+<g name="viewbox-axes" stroke="black" marker-end="url(#arrowHead)">
+	<line x1="-100" x2="200" y1="0" y2="0"/>
+	<line x1="0" x2="0" y1="-120" y2="80"/>
 	</g>
 
-<path d="M -100 100 h 200 v -200" fill="none" stroke="green"  />
+<line x1="-100" y1="-80" x2="200" y2="-80" stroke="grey" stroke-dasharray="4,4" />
+
+<g name="angled-axis" stroke="green" marker-end="url(#arrowHead)">
+	<line x1="200" y1="-80" x2="-100" y2="40"/>
+	</g>f
+
+<g name="points" stroke="black" fill="white">
+	<circle name="origin" r="5"/>
+	<circle name="P1" cx="200" cy="-80" r="5"/>
+	<circle name="P2" cx="-100" cy="40" r="5"/>
+	<circle name="P3" cx="-100" cy="-80" r="5"/>
 
 <g name="point-labels" stroke="none" fill="black">
-	<text x="-85" y="115">P2</text>
-	<text x="-60" y="135">(&minus;100,100)</text>
-	<text x="115" y="-85">P1</text>
-	<text x="130" y="-65">(&minus;100,100)</text>
-	<text x="100" y="120">P3</text>
-	<text x="100" y="140">(100,100)</text>
+	<text x="185" y="-95">P1</text>
+	<text x="210" y="-60">(200, -80)</text>
+	<text x="-85" y="55">P2</text>
+	<text x="-60" y="70">(-100, 40)</text>
+	<text x="-85" y="-95">P3</text>
+	<text x="-60" y="-60">(-100, -80)</text>
 	</g>
+</svg></figure><!--Lenght of the angled axis-->
 
-<g name="points" fill="white" stroke="black">
-	<circle name="P1" cx="100" cy="-100" r="5"/>
-	<circle name="P2" cx="-100" cy="100" r="5"/>
-	<circle name="P3" cx="100" cy="100" r="5"/>
-	<circle name="origin-marker" r="5"/>
-	</g>
-</svg></figure> <!--An angled graph axis in viewbox coordinates-->
+<p>Pythagoras, a well-respected ancient Greek, says:</p>
 
-<p>That makes sense. And now we can also calculate scaling factors for the projection of a point z onto the viewbox plane:</p>
+<div class="math"><div><math display="block">
+<mtable><mtr><mtd style="text-align:left">
+	<mi overline>P1P2</mi><mo>=</mo><msqrt><mrow style="margin-top:3px">
+	<msup><mrow><mo fence>(</mo><mi>x2</mi><mo>&minus;</mo><mi>x1</mi><mo fence>)</mo></mrow><mi>2</mi></msup>
+	<mo>+</mo>
+	<msup><mrow><mo fence>(</mo><mi>y2</mi><mo>&minus;</mo><mi>y1</mi><mo fence>)</mo></mrow><mi>2</mi></msup></mrow></msqrt>
+</mtd></mtr><mtr><mtd style="padding-top:20px ;  text-align:left">
+	<mo>=</mo><msqrt><mrow style="padding-top:3px"><msup><mi>300</mi><mi>2</mi></msup><mo>+</mo><msup><mi>120</mi><mi>2</mi></msup></mrow></msqrt>
+</mtd></mtr><mtr><mtd style="padding-top:20px ; text-align:left">
+	<mo>=</mo><mn>323</mn>
+</mtd></mtr></mtable>
+</math></div></div>
+
+<p>The JavaScript <tt>Math</tt> object has a method for this purpose: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot"><tt>hypot()</tt></a> computes the root of the sum of squares of arguments.</p>
+
+<!--h2--></div>
+
+<h2 cbc>Axis Projection Parameters</h2><div>
+
+<p>Scaling factors for the projection of a point z onto the viewbox plane:</p>
 
 <style></style>
 <div class="math"><div><math display="block">
@@ -1679,14 +1699,18 @@ const p2 = calculateIntersectionPoint( &alpha;1 );
 
 <!--h2--></div>
 
-<svg width="0" height="0">
+<svg name="arrow-head-definitions" width="0" height="0">
 <defs>
 	<polygon id="arrowShape" points="0 0 16 4 0 8" />
 	<marker id="arrowHead" markerUnits="userSpaceOnUse" overflow="visible" refX="16" refY="4" orient="auto-start-reverse" fill="context-stroke" stroke="context-stroke" >
 		<use href="#arrowShape" />
 		</marker>
+	<polygon id="angleHeadShape" points="0 0 10 3 0 6"/>
+	<marker id="angleHead" markerUnits="userSpaceOnUse" overflow="visible" refX="10" refY="3" orient="auto-start-reverse" fill="context-stroke" stroke="none" >
+		<use href="#angleHeadShape" />
+		</marker>
 	</defs>
-</svg>
+</svg> <!-- Arrowhead definitions -->
 
 </main><footer id="page-footer"></footer>
 <script type="module" src="/inc/page.js" ></script>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="template-info" file-name="empty.htm" version="2022-12-01" editor="USP" />
+<meta name="author" content="USP" />
+<meta name="creation-date" content="2023-05-13" />
+<meta name="editor" content="USP" />
+<meta name="change-date" content="2023-05-13" />
+<meta name="version" content="1" />
+<meta name="categories" content="Programming > SVG > Plotter" />
+<meta name="tags" content="programming, SVG, toolbox, plotter" />
+<meta name="description" content="The SVG function plotter library creates a graph of one or more functions in an SVG image." />
+
+<link rel="icon" type="image/png" href="/favicon.png" sizes="16x16" />
+<link rel="stylesheet" href="/inc/page.css" />
+<link rel="stylesheet" href="/inc/evaluator-1.css" />
+<link rel="stylesheet" href="/site.css" />
+<link rel="stylesheet" href="/site.css" />
+
+<title>Helper: Calculators</title>
+
+</head><body><header id="page-header"><object data="title.svg" type="image/svg+xml" style="object-fit:contain"></object></header><div id="main-toolbar"></div><main id="page-content">
+
+<h1>Calculators</h1>
+
+<p id="page-abstract"></p>
+
+<style>
+#calculator-1 label {
+	display : inline-block ;
+	white-space : nowrap ;
+	}
+#calculator-1 label+input,
+#calculator-1 span+label {
+	margin-left : 20px ;
+	}
+#calculator-1 label:has(+ input) {
+	width: 80px;
+	}
+
+label {}
+</style>
+<div class="calculator" id="calculator-1">
+	<!-- fixed values -->
+	<!-- variable input -->
+<label for="length1">Lenght 1: </label><input id="length1" type="number" data-set="length1" data-member="value" data-exec="update"/><br/>
+<label for="length2">Length 2: </label><input id="length2" type="number" data-set="length2" data-member="value" data-exec="update"/><br/>
+<label for="angle">Angle: </label><input id="angle" type="number" data-set="alpha" data-member="value" data-exec="update"/><br/>
+	<!-- calculated values -->
+<label>sin &alpha;= </label><span data-get="sinusAlpha" data-member="innerText"></span>
+<label>cos &alpha;= </label><span data-get="cosinusAlpha" data-member="innerText"></span>
+<label>tan &alpha;= </label><span data-get="tangensAlpha" data-member="innerText"></span>
+<br/>
+<label>length1 sin &alpha;= </label><span data-get="length1SinusAlpha" data-member="innerText"></span>
+<label>length1 cos &alpha;= </label><span data-get="length1CosinusAlpha" data-member="innerText"></span><br/>
+<label>length1 tan &alpha;= </label><span data-get="length1TimesTangensAlpha" data-member="innerText"></span>
+<label>length1 by tan &alpha;= </label><span data-get="length1ByTangensAlpha" data-member="innerText"></span>
+<br/>
+<label>length2 tan &alpha;= </label><span data-get="length2TimesTangensAlpha" data-member="innerText"></span>
+<label>length2 by tan &alpha;= </label><span data-get="length2ByTangensAlpha" data-member="innerText"></span>
+
+<script type="module" name="calculator-1">
+const evaluatorScope = {
+	update : function ( ) {
+		const a = this.alpha / 180 * Math.PI;
+		evaluator.set( "sinusAlpha", Math.sin( a ).toFixed( 2 ));
+		evaluator.set( "cosinusAlpha", Math.cos( a ).toFixed( 2 ));
+		evaluator.set( "tangensAlpha", Math.tan( a ).toFixed( 2 ));
+		evaluator.set( "length1SinusAlpha", (this.length1 * Math.sin( a )).toFixed( 2 ));
+		evaluator.set( "length1CosinusAlpha", (this.length1 * Math.cos( a )).toFixed( 2 ));
+		evaluator.set( "length1TimesTangensAlpha", (this.length1 * Math.tan( a )).toFixed( 2 ));
+		evaluator.set( "length1ByTangensAlpha", (this.length1 / Math.tan( a )).toFixed( 2 ));
+		evaluator.set( "length2TimesTangensAlpha", (this.length2 * Math.tan( a )).toFixed( 2 ));
+		evaluator.set( "length2ByTangensAlpha", (this.length2 / Math.tan( a )).toFixed( 2 ));
+		}
+	} ;
+
+import { Evaluator } from "/inc/evaluator-1.js" ;
+const evaluator = new Evaluator( { container : "calculator-1", scope : evaluatorScope } );
+// document.querySelector( "#calculator-1 input" ).focus();
+</script><!--Calculator 1 Script-->
+</div>
+
+<div class="calculator" id="calculator-2" style="margin-top:20px">
+	<!-- fixed values -->
+	<!-- variable input -->
+<label for="sideA">Side a: </label><input type="number" data-set="sideA" data-member="value" data-exec="update"/><br/>
+<label for="sideB">Side b: </label><input type="number" data-set="sideB" data-member="value" data-exec="update"/><br/>
+	<!-- computed values -->
+<label>&alpha;= </label><span data-get="alpha" data-member="innerText"></span>
+<label>sin &alpha;= </label><span data-get="sinusAlpha" data-member="innerText"></span>
+<label>cos &alpha;= </label><span data-get="cosinusAlpha" data-member="innerText"></span>
+<label>tan &alpha;= </label><span data-get="tangensAlpha" data-member="innerText"></span><br/>
+
+<script type="module" name="calculator-2">
+
+	// Evaluator scope object
+const evaluatorScope2 = {
+	name : "caluclator 2" ,
+	update : function ( ) {
+		const a = Math.atan( this.sideA / this.sideB );
+		evaluator.set( "alpha", (a / Math.PI * 180).toFixed( 2 ));
+		evaluator.set( "sinusAlpha", Math.sin( a ).toFixed( 2 ));
+		evaluator.set( "cosinusAlpha", Math.cos( a ).toFixed( 2 ));
+		evaluator.set( "tangensAlpha", Math.tan( a ).toFixed( 2 ));
+		}
+	} ;
+
+	// Initialize the evaluator
+import { Evaluator } from "/inc/evaluator-1.js" ;
+const evaluator = new Evaluator( { container : "calculator-2", scope : evaluatorScope2 } );
+document.querySelector( "#calculator-2 input" ).focus();
+
+</script></div>
+
+</main><footer id="page-footer"></footer>
+<script type="module" src="/inc/page.js" ></script>
+
+</body></html>

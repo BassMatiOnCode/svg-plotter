@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="template-info" file-name="empty.htm" version="2022-12-01" editor="USP" />
+<meta name="author" content="USP" />
+<meta name="creation-date" content="2023-05-13" />
+<meta name="editor" content="USP" />
+<meta name="change-date" content="2023-05-13" />
+<meta name="version" content="1" />
+<meta name="categories" content="Programming > SVG > Plotter" />
+<meta name="tags" content="programming, SVG, toolbox, plotter" />
+<meta name="description" content="The SVG function plotter library creates a graph of one or more functions in an SVG image." />
+
+<link rel="icon" type="image/png" href="/favicon.png" sizes="16x16" />
+<link rel="stylesheet" href="/inc/page.css" />
+<link rel="stylesheet" href="/inc/evaluator-1.css" />
+<link rel="stylesheet" href="/site.css" />
+<link rel="stylesheet" href="/site.css" />
+
+<style>
+svg text { 
+	stroke : none ; 
+	}
+svg [sub] { 
+	baseline-shift : sub ;
+	font-size : 70% ;
+	}
+table[algorithm] th[heading] {
+	background-color : #EEE ;
+	}
+table[algorithm] tbody[calculations] td,
+table[algorithm] tbody[calculations] th {
+	 vertical-align : top ; 
+	 text-align : left ;
+	}
+</style>
+
+<title>Plotter Test 2</title>
+
+</head><body><header id="page-header"><object data="title.svg" type="image/svg+xml" style="object-fit:contain"></object></header><div id="main-toolbar"></div><main id="page-content">
+
+<h1>Plotter Test 2</h1>
+
+<p id="page-abstract"></p>
+
+
+<h2 cbc>Coordinate Calculation Test</h2><div>
+
+<figure><figcaption class="figure">20 degree axis intersection points</figcaption>
+<svg id="calc-1-figure" width="500" height="300" viewBox="-200,-100,500,300" boxed text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="overflow:visible">
+
+<g id="viewbox-axes" stroke="black">
+	<line x1="-200" x2="300" y1="0" y2="0" marker-end="url(#arrowHead)" />
+	<line x1="0" x2="0" y1="-100" y2="200" marker-end="url(#arrowHead)" />
+	</g><!-- Viewbox Axes -->
+
+<g id="axesLabels" stroke="none" fill="black">
+	<text x="288" y="-15">x</text>
+	<text x="13" y="188">y</text>
+	</g>
+
+<g stroke="green">
+	<line x1="-200" y1="72.79" x2="275" y2="-100" marker-end="url(#arrowHead)"/>
+	<path d="M 35 0 A 35 35 30 0 0 32.89 -11.97" />
+	<path d="M 30 0 A 30 30 200 1 0 -28.2 10.3" fill="none" />
+	</g>
+
+<g stroke="black" fill="white">
+	<circle id="P1" cx="-200" cy="72.79" r="5" fill="red"/>
+	<circle id="P2" cx="275" cy="-100" r="5" fill="green" />
+	</g>
+
+<g stroke="none" fill="black">
+	<text x="50" y="-8">&alpha;1</text>
+	<text x="-52" y="10">&alpha;2</text>
+	<text x="-180" y="85">P1</text>
+	<text x="275" y="-80">P2</text>2
+	</g>
+
+<g id="viewboxOrigin">
+	<circle r="5" stroke="black" fill="white" />
+	</g>
+</svg></figure>
+
+<div class="calculator" id="calculator-1">
+	<!-- fixed values -->
+	<!-- variable input -->
+<label for="angle">Angle: </label><input id="angle" type="number" min="0" max="360" data-set="alpha" data-member="value" value="20" data-exec="update"/><br/>
+	<!-- calculated values -->
+<label>Computed &alpha; = </label><span data-get="computedAlpha" data-member="innerText"></span><label>tan &alpha; = </label><span data-get="tangensAlpha" data-member="innerText"></span><br/>
+<label>x1 = </label><span data-get="x1" data-member="innerText"></span><label>y1 = </label><span data-get="y1" data-member="innerText"></span><br/>
+<label>x2 = </label><span data-get="x2" data-member="innerText"></span><label>y2 = </label><span data-get="y2" data-member="innerText"></span><br/>
+
+<script type="module" name="calculator-1">
+
+	// Scope object for the evaluator
+const evaluatorScope = {
+	update : function ( ) {
+		const rangeErrorMessage = "calculator-1:update: Angle out of range." ;
+			// Convert angle to radians
+		this.alpha = +this.alpha;
+			// Each of the four quadrants may be different in size
+		if ( +this.alpha < 0 ) throw new Error( rangeErrorMessage );
+		else if ( +this.alpha < 90 ) {  // Quadrant 1
+			evaluator.set( "computedAlpha", this.alpha );
+			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
+			evaluator.set( "x1", Math.max( this.xMin, -this.yMax / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y1", Math.min( this.yMax, -this.xMin * this.tangensAlpha ).toFixed( 0 ));
+			evaluator.set( "x2", Math.min( this.xMax, -this.yMin / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y2", Math.max( this.yMin, -this.xMax * this.tangensAlpha ).toFixed( 0 ));
+			}
+		else if ( +this.alpha < 180 ) {  // Quadrant 2
+			evaluator.set( "computedAlpha", 180 - this.alpha );
+			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
+			evaluator.set( "x1", Math.min( this.xMax, this.yMax / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y1", Math.min( this.yMax, this.xMax * this.tangensAlpha ).toFixed( 0 ));
+			evaluator.set( "x2", Math.max( this.xMin, this.yMin / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y2", Math.max( this.yMin, this.xMin * this.tangensAlpha ).toFixed( 0 ));
+			}
+		else if ( +this.alpha < 270 ) {  // Quadrant 3
+			evaluator.set( "computedAlpha", this.alpha - 180 );
+			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
+			evaluator.set( "x1", Math.min( this.xMax, -this.yMin / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y1", Math.max( this.yMin, -this.xMax * this.tangensAlpha ).toFixed( 0 ));
+			evaluator.set( "x2", Math.max( this.xMin, -this.yMax / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y2", Math.min( this.yMax, -this.xMin * this.tangensAlpha ).toFixed( 0 ));
+			}
+		else if ( +this.alpha <= 360 ) {  // Quadrant 4
+			evaluator.set( "computedAlpha", 360 - this.alpha );
+			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
+			evaluator.set( "x1", Math.max( this.xMin, this.yMin / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y1", Math.max( this.yMin, this.xMin * this.tangensAlpha ).toFixed( 0 ));
+			evaluator.set( "x2", Math.min( this.xMax, this.yMax / this.tangensAlpha).toFixed( 0 ));
+			evaluator.set( "y2", Math.min( this.yMax, this.xMax * this.tangensAlpha ).toFixed( 0 ));
+			}
+		else throw new Error( rangeErrorMessage );
+			// Move the figure points
+		this.point1.setAttribute( "cx", this.x1 );
+		this.point1.setAttribute( "cy", this.y1 );
+		this.point2.setAttribute( "cx", this.x2 );
+		this.point2.setAttribute( "cy", this.y2 );
+		} ,
+	figure : document.getElementById( "calc-1-figure" ),
+	point1 : document.querySelector( "#calc-1-figure #P1" ),
+	point2 : document.querySelector( "#calc-1-figure #P2" )
+	} ;
+
+	// Create the evaluator 
+import { Evaluator } from "/inc/evaluator-1.js" ;
+const evaluator = new Evaluator( { 
+	container : "calculator-1" ,
+	scope : evaluatorScope 
+	} );
+
+	// Set fixed values
+evaluator.set( "xMin", -200 );
+evaluator.set( "xMax", 300 );
+evaluator.set( "yMin", -100 );
+evaluator.set( "yMax", 200 );
+
+</script>
+
+</div><!--Calculator 1-->
+
+<!--h2--></div>
+
+</main><footer id="page-footer"></footer>
+<script type="module" src="/inc/page.js" ></script>
+
+<script type="module" >
+import { initPage } from "/inc/svg/svg-context-color-fix.js" ;
+initPage( ) ;
+</script><!-- Fix marker context colors -->
+<svg width="0" height="0">
+<defs>
+	<polygon id="arrowShape" points="0 0 16 4 0 8" />
+	<marker id="arrowHead" markerUnits="userSpaceOnUse" overflow="visible" refX="16" refY="4" orient="auto-start-reverse" fill="context-stroke" stroke="context-stroke" >
+		<use href="#arrowShape" />
+		</marker>
+	</defs>
+</svg>
+
+</body></html>
