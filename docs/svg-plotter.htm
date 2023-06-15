@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=0.75 minimum-scale=0.3 maximum-scale=5 user-scalable=1">
 <meta name="template-info" file-name="empty.htm" version="2022-12-01" editor="USP" />
 <meta name="author" content="USP" />
 <meta name="creation-date" content="2023-05-13" />
@@ -15,26 +15,8 @@
 <link rel="icon" type="image/png" href="/favicon.png" sizes="16x16" />
 <link rel="stylesheet" href="/inc/page.css" />
 <link rel="stylesheet" href="/inc/evaluator-1.css" />
+<link rel="stylesheet" href="/css/math.css" />
 <link rel="stylesheet" href="/site.css" />
-<link rel="stylesheet" href="/site.css" />
-
-<style>
-svg text { 
-	stroke : none ; 
-	}
-svg [sub] { 
-	baseline-shift : sub ;
-	font-size : 70% ;
-	}
-table[algorithm] th[heading] {
-	background-color : #EEE ;
-	}
-table[algorithm] tbody[calculations] td,
-table[algorithm] tbody[calculations] th {
-	 vertical-align : top ; 
-	 text-align : left ;
-	}
-</style>
 
 <title>Web Toolbox - SVG Function Plotter</title>
 
@@ -44,14 +26,11 @@ table[algorithm] tbody[calculations] th {
 
 <p id="page-abstract"></p>
 
+<p class="note">NOTE: This page contains MathML elements, which is not well supported by Chrome and Edge on Android devices, but Firefox does quite a good job and renders the equations nicely.</p>
+
 <p>The SVG function plotter shall support one, two and three-dimensional functions, multiple coordinate system axes, and multiple graphs in the same SVG image.</p>
 
 <p>Some examples (TODO):</p>
-
-<p>A one-dimensional number line</p>
-<p>A cartesian coordinate system for a two-dimensional graph</p>
-<p>Multiple y-axes for multiple graphs</p>
-<p>A three-dimensional graph</p>
 
 <h2 cbc>About Coordinate Systems</h2><div>
 
@@ -352,8 +331,8 @@ table[algorithm] tbody[calculations] th {
 	<text x="225" y="120">&gamma;</text>
 	<text x="270" y="80">y</text>
 	<text x="140" y="170">x</text>
-	<text x="260" y="-15">A</text>
-	<text x="-15" y="170">B</text>
+	<text x="260" y="-15">B</text>
+	<text x="-15" y="170">A</text>
 	<text x="260" y="180">C</text>
 	<text x="130" y="60">c</text>
 	</g>
@@ -366,7 +345,7 @@ table[algorithm] tbody[calculations] th {
 
 </svg></figure> <!-- Relationships in a right-angled triangle -->
 
-<p>So tangens &alpha; essentially is the <em>slope</em> of the line <math><mi overline>O P1</mi></math>.</p>
+<p>So tangens &alpha; essentially is the <em>slope</em> of the line <math><mi overline>AB</mi></math>.</p>
 
 <h3 cbc>Finding the X Coordinate</h3><div>
 
@@ -927,6 +906,139 @@ table[algorithm] tbody[calculations] th {
 
 <!--h3--></div>
 
+<h3 cbc>Angle and Reference Point</h3><div>
+
+<p>The following figure illustrates an axis line with the specified angle &alpha; through the reference point R:</p>
+
+<figure><figcaption class="figure">Angle and Reference Point</figcaption><svg boxed width="300" height="200" viewBox="-100, -120, 300, 200" overflow="visible" text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="margin-top:10px ; margin-left:20px">
+
+<g name="viewbox-axes" stroke="black" marker-end="url(#arrowHead)">
+	<line x1="-100" x2="200" y1="0" y2="0"/>
+	<line x1="0" x2="0" y1="-120" y2="80"/>
+	</g>
+
+<g name="angled-axis" stroke="green" marker-end="url(#arrowHead)">
+	<line x1="-100" y1="40" x2="131" y2="-120"/>
+	</g>
+
+<path name="angle-arc" stroke="green" fill="none" marker-end="url(#angleHead)" d="M 17.8 0 a 60 60 45 0 0 -10.67 -34.16 "/>
+
+<g name="angle-labels" transform="translate(0,-15)">
+	<rect x="-8" y="-7" width="16" height="14" fill="white"/>
+	<text stroke="none" fill="green">&alpha;</text>
+	</g>
+
+<g name="points" stroke="black" fill="white">
+	<circle name="origin" r="5"/>
+	<circle name="P1" cx="-100" cy="40" r="5"/>
+	<circle name="P2" cx="131" cy="-120" r="5"/>
+	<circle name="R" cx="30" cy="-50" r="5"/>
+	<circle name="xMin" cx="-100" cy="0" r="5"/>
+	<circle name="xMax" cx="200" cy="0" r="5"/>
+	<circle name="yMin" cx="0" cy="-120" r="5"/>
+	<circle name="yMax" cx="0" cy="80" r="5"/>
+	</g>
+
+<g name="point-labels" stroke="none" fill="black">
+	<text x="15" y="15">O</text>
+	<text x="-80" y="50">P1</text>
+	<text x="-60" y="70">(-100, 40)</text>
+	<text x="140" y="-100">P2</text>
+	<text x="140" y="-80">(131, -120)</text>
+	<text x="20" y="-65">R</text>
+	<text x="60" y="-30">(30, -50)</text>
+	<g transform="translate(-100,-20)">
+		<rect x="-20" y="-8" width="40" height="16" fill="white"/>
+		<text>xMin</text>
+		</g>
+	<g transform="translate(200,-20)">
+		<rect x="-20" y="-8" width="40" height="16" fill="white"/>
+		<text>xMax</text>
+		</g>
+	<g transform="translate(10,-120)">
+		<rect x="0" y="-8" width="45" height="16" fill="white"/>
+		<text x="2" text-anchor="start">yMin</text>
+		</g>
+	<g transform="translate(10,80)">
+		<rect x="0" y="-8" width="45" height="16" fill="white"/>
+		<text x="2" text-anchor="start">yMax</text>
+	</g></g>
+</svg></figure><!--Angle and Reference Point-->
+
+<p>If we assume the reference as new origin (0, 0), we get a transformed coordinate system:</p>
+
+<figure><figcaption class="figure">Transformed diagram</figcaption><svg boxed width="300" height="200" viewBox="-100, -120, 300, 200" overflow="visible" text-anchor="middle" dominant-baseline="middle" font-family="Times New Roman" font-size="18px" style="margin-top:10px ; margin-left:20px" >
+
+<g name="viewbox-axes" stroke="black" marker-end="url(#arrowHead)">
+	<line x1="-100" x2="200" y1="-50" y2="-50"/>
+	<line x1="30" x2="30" y1="-120" y2="80"/>
+	</g>
+
+<g name="angled-axis" stroke="green" marker-end="url(#arrowHead)">
+	<line x1="-100" y1="40" x2="131" y2="-120"/>
+	</g>
+
+<path name="angle-arc" stroke="green" fill="none" marker-end="url(#angleHead)" d="M 90 -50 a 60 60 45 0 0 -10.67 -34.16 "/>
+
+<text stroke="none" fill="green" x="70" y="-63">&alpha;</text>
+
+<g name="points" stroke="black" fill="white">
+	<circle name="origin" r="5"/>
+	<circle name="P1" cx="-100" cy="40" r="5"/>
+	<circle name="P2" cx="131" cy="-120" r="5"/>
+	<circle name="P3" cx="30" cy="-50" r="5"/>
+	<circle name="xMin" cx="-100" cy="-50" r="5"/>
+	<circle name="xMax" cx="200" cy="-50" r="5"/>
+	<circle name="yMin" cx="30" cy="-120" r="5"/>
+	<circle name="yMax" cx="30" cy="80" r="5"/>
+	</g>
+
+<g name="point-labels" stroke="none" fill="black">
+	<text x="15" y="15">O</text>
+	<text x="-80" y="50">P1</text>
+	<text x="-60" y="70">(-100, 40)</text>
+	<text x="140" y="-100">P2</text>
+	<text x="140" y="-80">(131, -120)</text>
+	<text x="20" y="-65">R</text>
+	<text x="55" y="-30">(0, 0)</text>
+	<g transform="translate(-100,-30)">
+		<rect x="-20" y="-8" width="40" height="16" fill="white"/>
+		<text>xMin&minus;30</text>
+		</g>
+	<g transform="translate(200,-30)">
+		<rect x="-20" y="-8" width="40" height="16" fill="white"/>
+		<text>xMax&minus;30</text>
+		</g>
+	<g transform="translate(40,-120)">
+		<rect x="0" y="-8" width="75" height="16" fill="white"/>
+		<text x="2" text-anchor="start">yMin+50</text>
+		</g>
+	<g transform="translate(40,80)">
+		<rect x="0" y="-8" width="75" height="16" fill="white"/>
+		<text x="2" text-anchor="start">yMax+50</text>
+	</g></g>
+
+</svg></figure><!--Transformed diagram-->
+
+<p>The range values for the transformed coordinate system are obtained from these equations: </p>
+
+<div class="math"><div><math display="block">
+<mtext>(13)&emsp;</mtext>
+<mtable rows-separated left-aligned><mtr><mtd>
+	<mi>xMinT</mi><mo>=</mo><mi>xMin</mi><mo>&minus;</mo><mi>xR</mi>
+</mtd></mtr><mtr><mtd>
+	<mi>xMaxT</mi><mo>=</mo><mi>xMax</mi><mo>&minus;</mo><mi>xR</mi>
+</mtd></mtr><mtr><mtd>
+	<mi>yMinT</mi><mo>=</mo><mi>xMin</mi><mo>&minus;</mo><mi>yR</mi>
+</mtd></mtr><mtr><mtd>
+	<mi>yMaxT</mi><mo>=</mo><mi>xMax</mi><mo>&minus;</mo><mi>yR</mi>
+</mtd></mtr></mtable>
+</math></div></div>
+
+<p>With these new values used in equations (2) to (12), we can calculate the axis end point coordinates as before.</p>
+
+<!--h3--></div>
+
 <h3 cbc id="coord-calc-test">Coordinate Calculation Test</h3><div>
 
 <figure><figcaption class="figure">20 degree axis intersection points</figcaption>
@@ -993,7 +1105,7 @@ const evaluatorScope = {
 			evaluator.set( "y2", Math.max( this.yMin, -this.xMax * this.tangensAlpha ).toFixed( 0 ));
 			}
 		else if ( +this.alpha < 180 ) {  // Quadrant 2
-			evaluator.set( "computedAlpha", 180 - this.alpha );
+			evaluator.set( "computedAlpha", 180 -  this.alpha );
 			evaluator.set( "tangensAlpha", +(Math.tan( this.computedAlpha / 180 * Math.PI ).toFixed( 2 )));
 			evaluator.set( "x1", Math.min( this.xMax, this.yMax / this.tangensAlpha).toFixed( 0 ));
 			evaluator.set( "y1", Math.min( this.yMax, this.xMax * this.tangensAlpha ).toFixed( 0 ));
@@ -1086,7 +1198,7 @@ evaluator.set( "yMax", 200 );
 	<text x="-85" y="-95">P3</text>
 	<text x="-60" y="-60">(-100, -80)</text>
 	</g>
-</svg></figure><!--Lenght of the angled axis-->
+</svg></figure><!--Length of the angled axis-->
 
 <p>Pythagoras, a well-respected ancient Greek, says:</p>
 

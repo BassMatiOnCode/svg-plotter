@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="template-info" file-name="empty.htm" version="2022-12-01" editor="USP" />
+<meta name="author" content="USP" />
+<meta name="creation-date" content="2023-05-13" />
+<meta name="editor" content="USP" />
+<meta name="change-date" content="2023-05-13" />
+<meta name="version" content="1" />
+<meta name="categories" content="Programming > SVG > Plotter > Test" />
+<meta name="tags" content="programming, SVG, toolbox, function, plotter, test" />
+<meta name="description" content="Test module for the SVG Function Plotter module." />
+
+<link rel="icon" type="image/png" href="/favicon.png" sizes="16x16" />
+<link rel="stylesheet" href="/inc/page.css" />
+<link rel="stylesheet" href="/site.css" />
+
+<title>Web Toolbox - SVG Function Plotter Module Test</title>
+
+</head><body><header id="page-header"><object data="../title.svg" type="image/svg+xml" style="object-fit:contain"></object></header><div id="main-toolbar"></div><main id="page-content">
+
+<h1>SVG Function Plotter</h1>
+
+<p id="page-abstract"></p>
+
+<svg name="linehead-definitions" width="0" height="0">
+<defs>
+	<polygon id="arrowShape" points="0 0 16 4 0 8" />
+	<marker id="arrowHead" markerUnits="userSpaceOnUse" overflow="visible" refX="16" refY="4" orient="auto-start-reverse" fill="context-stroke" stroke="context-stroke" >
+		<use href="#arrowShape" />
+		</marker>
+	</defs>
+</svg> <!--SVG Marker Definitions-->
+
+
+<svg id="svg-01" width="300" height="200" viewBox="-100,-100,300,200" style="border:1px solid silver" >
+<g id="axes" xstroke="black"></g>
+<g id="points" stroke="black" fill="white">
+	<circle name="viewbox-origin" r="5" />
+	</g>
+</svg> <!-- SVG test image -->
+
+</main><footer id="page-footer"></footer>
+
+<script type="module" src="/inc/page.js" ></script>
+
+<script type="module">
+import * as plotter from "./svg-plotter-1.js" ;
+const p = new plotter.Plotter( document.getElementById( "svg-01" ) );
+const x = p.createAxis( "x" , -0.5, 1.3,  { angle: 0, lineAttributes: { stroke : "red" }, tickmarks: { length: 10, distance: 0.2 } } ) ;
+const y = p.createAxis( "y", -0.4, 0.8,  { angle: 90, lineAttributes: { stroke : "green" }, tickmarks: { length: 10, distance: 0.1 } } ) ;
+const z = p.createAxis( "z", -0.4, 0.8, { R2 : { x: -100, y: 100 }, lineAttributes:{ stroke: "blue" }, tickmarks: { length : 15, distance: 0.1, lineAttributes: { stroke: "black" } } } ) ;
+</script> <!--SVG Plotter Script-->
+
+<script type="module" >
+import { initPage } from "/inc/svg/svg-context-color-fix.js" ;
+initPage( ) ;
+</script><!-- Fix marker context colors -->
+
+</body></html>

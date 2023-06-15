@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.75 minimum-scale=0.3 maximum-scale=5 user-scalable=1">
+<meta name="template-info" file-name="empty.htm" version="2022-12-01" editor="USP" />
+<meta name="author" content="USP" />
+<meta name="creation-date" content="2023-05-13" />
+<meta name="editor" content="USP" />
+<meta name="change-date" content="2023-05-13" />
+<meta name="version" content="1" />
+<meta name="categories" content="Programming > SVG > Plotter" />
+<meta name="tags" content="programming, SVG, toolbox, plotter" />
+<meta name="description" content="Here are the implementation details, underlying math, geometries, et cetera." />
+
+<link rel="icon" type="image/png" href="/favicon.png" sizes="16x16" />
+<link rel="stylesheet" href="/inc/page.css" />
+<link rel="stylesheet" href="/inc/svg/svg-1.css" />
+<link rel="stylesheet" href="/inc/evaluator-1.css" />
+<link rel="stylesheet" href="/site.css" />
+
+<title>Web Toolbox - SVG Function Plotter</title>
+
+</head><body><header id="page-header"><object data="title.svg" type="image/svg+xml" style="object-fit:contain"></object></header><div id="main-toolbar"></div><main id="page-content">
+
+<h1>Implementation Details</h1>
+
+<p id="page-abstract"></p>
+
+<p class="note">NOTE: This page contains MathML elements, which is not well supported by Chrome and Edge on Android devices. But Firefox does quite a good job and renders the equations nicely.</p>
+
+<h2 cbc>About Coordinate Systems</h2><div>
+
+<p>The space of an SVG image is inherently two-dimesional. It is defined by the SVG element's <tt>viewBox</tt> attribute:</p>
+
+<pre>&lt;svg viewBox = "-100, -100, 300, 300"...</pre>
+
+<p>The viewbox is a cartesian coodinate system, and these values define the coordinates of the upper left corner xMin and yMin, width and height of the diagram. These values inherently define the location of the origin (0,0) in the image as well as <math><msub><mi>x</mi><mi>max</mi></msub></math> and <math><msub><mi>y</mi><mi>max</mi></msub></math>:</p>
+
+<figure><figcaption class="figure">Coordinates in SVG space</figcaption>
+<svg width="300" height="300" viewBox="-100,-100,300,300" boxed text-anchor="middle" dominant-baseline="middle" font-size="18px" overflow="visible" style="margin-top:10px">
+
+<g name="axes" stroke="black" marker-end="url(#arrowHead)">
+	<line x1="-100" x2="+200" y1="0" y2="0"/>
+	<line x1="0" x2="0" y1="-100" y2="200"/>
+	</g> <!--axes-->
+
+<g name="tickmarks" stroke="black" fill="none">
+	<path d="M -100 -5 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10 m 25 -10 v 10" />
+	<path d="M -5 -100 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10 m -10 25 h 10" />
+	</g>
+	
+<g name="axis-labels" stroke="none" fill="black">
+	<text x="190" y="15">x</text>
+	<text x="-15" y="190">y</text>
+	<g transform="translate(-100,-12)">
+		<rect x="-20" y="-12" width="40" height="20" fill="white"/>	
+		<text>-100</text>
+		</g>
+	<text x="-50" y="-12">-50</text>
+	<text x="50" y="-12">50</text>
+	<text x="100" y="-12">100</text>
+	<text x="150" y="-12">150</text>
+	<g transform="translate(200,-12)">
+		<rect x="-20" y="-12" width="40" height="20" fill="white"/>	
+		<text>200</text>
+		</g>
+	<g text-anchor="start">
+		<g transform="translate(10,-100)">
+			<rect x="-2" y="-12" width="40" height="20" fill="white"/>	
+			<text>-100</text>
+			</g>
+		<text x="10" y="-50">-50</text>
+		<text x="10" y="50">50</text>
+		<text x="10" y="100">100</text>
+		<text x="10" y="150">150</text>
+		<text x="10" y="200">200</text>
+		<g transform="translate(10,200)">
+			<rect x="-2" y="-12" width="40" height="20" fill="white"/>	
+			<text>200</text>
+			</g>
+		
+		</g>
+	</g>
+
+<circle name="origin-marker" r="5" fill="white" stroke="black"/>
+
+</svg></figure> <!--Coordinates in SVG space-->
+
+<p>The point at viewbox coordinates (0,0) is also called the <em>origin</em>.</p>
+
+<p>With the information above, we can calculate the viewbox parameters <math><msub><mi>x</mi><mi>max</mi></msub></math> and <math><msub><mi>y</mi><mi>max</mi></msub></math>:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(1)</mtext>
+<mtable rows-separated left-aligned><mtr><mtd>
+	<msub><mi>x</mi><mi>min</mi></msub><mo>=</mo><mi>viewBox.x</mi><mo>=</mo><mn>&minus;100</mn>
+</mtd></mtr><mtr><mtd>
+	<msub><mi>x</mi><mi>max</mi></msub><mo>=</mo><mi>viewBox.width</mi><mo>+</mo><msub><mi>x</mi><mi>min</mi></msub><mo>=</mo><mn>300</mn><mo>&minus;</mo><mn>100</mn><mo>=</mo><mn>200</mn> 
+</mtd></mtr><mtr><mtd>
+	<msub><mi>y</mi><mi>min</mi></msub><mo>=</mo><mi>viewBox.y</mi><mo>=</mo><mn>&minus;100</mn>
+</mtd></mtr><mtr><mtd>
+	<msub><mi>y</mi><mi>max</mi></msub><mo>=</mo><mi>viewBox.height</mi><mo>+</mo><msub><mi>y</mi><mi>min</mi></msub><mo>=</mo><mn>300</mn><mo>&minus;</mo><mn>100</mn><mo>=</mo><mn>200</mn> 
+</mtd></mtr></mtable>
+</math></div></div>
+
+<p>Viewbox axes are a concept, they are inherently invisible. The image above has appropriate drawing instructions for illustration purpose. They will not show up in a function graph image.</p>
+
+<p>Plottet functions introduce their own coordinate system with up to three axes. These axes can be angled in any direction, and might not even go through the viewbox origin (0, 0). So let's have a closer look on the definition of function space axes.</p>
+
+<!-- h2 -- About Coordinate Systems --></div>
+
+<h2 cbc>Definition of Function Space Axes</h2><div>
+
+<p>An author should have two methods define a diagram axis:</p>
+
+<ol>
+<li>Angle and reference point</li>
+<li>Two reference points</li>
+</ol>
+
+<p>The angle defines the slope and direction (where the axis arrow points to). The reference point is optional. If not specified, the viewbox origin (0,0) is used. </p>
+
+<p>The seccond method uses two points in the format "to&ndash;from" to define slope and direction. The second point is optional, if not specified, the viewbox origin is used. </p>
+
+<p>The axis line <em>direction</em> determines where the arrow head appears. It is always the line end, pointing in the direction of positive axis values. The length is determined by the four viewbox borders. The line intersects them at exactly two points, <math><msub><mi>P</mi><mn>1</mn></msub></math> and <math><msub><mi>P</mi><mn>2</mn></msub></math></p>
+
+<p>We will use the slope-intercept form of the line equation for the calculations:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(2)</mtext>
+<mi>y</mi><mo>=</mo><mi>m</mi><mi>x</mi><mo>+</mo><mi>b</mi><mo>&emsp;&hArr;&emsp;</mo><mi>x</mi><mo>=</mo><mfrac><mrow><mi>y</mi><mo>&minus;</mo><mi>b</mi></mrow><mi>m</mi></mfrac>
+</math></div></div>
+
+<h3 cbc>Point&ndash;Angle Method</h3><div>
+
+<p>If the user supplies an angle &alpha; and a reference point R, we can determine the parameters m and b of the line equation. Figure 2 shows an example:</p>
+
+<figure><figcaption class="figure">A function space axis</figcaption><svg width="300" height="200" viewBox="-100, -100, 300, 200" boxed text-anchor="middle" dominant-baseline="middle" font-size="18px" overflow="visible" stroke="black" style="margin-top:10px">
+
+<g name="viewbox-axes" marker-end="url(#arrowHead)">
+	<line x1="-100" x2="200" y1="0" y2="0"/>
+	<line x1="0" x2="0" y1="-100" y2="100"/>
+	</g>
+
+<g name="axis-line" stroke="green" marker-end="url(#arrowHead)">
+	<line x1="-100" y1="20" x2="150" y2="-100"/>
+	</g>
+
+<path name="angle-arc" stroke="green" fill="none" marker-end="url(#angleHead)" d="M -28 0 a 30 30 25 0 0 -2.9 -12.87 "/>
+<text x="-18" y="-9" fill	="green">&alpha;</text>
+
+<g name="points" fill="white">
+	<circle name="origin" r="5"/>
+	<circle name="R" cx="40" cy="-47" r="5"/>
+	<circle name="B" cy="-28" r="5"/>
+	<circle name="A" cx="-58" r="5"/>
+	<circle name="P1" cx="-100" cy="20" r="5"/>
+	<circle name="P2" cx="150" cy="-100" r="5"/>
+	</g>
+
+<g name="point-labels">
+	<text x="15" y="15">O</text>
+	<text x="30" y="-60">R</text>
+	<text x="-17" y="-35">B</text>
+	<text x="-63" y="-15">A</text>
+	<g transform="translate(-100, 40)" stroke="none">
+		<rect x="-15" y="-10" width="30" height="16" fill="white"/>
+		<text>P1</text>
+		</g>
+	<g transform="translate(170, -100)" stroke="none">
+		<rect x="-13" y="-10" width="26" height="16" fill="white"/>
+		<text>P2</text>
+		</g>
+	</g>
+
+</svg></figure> <!-- A function space axis -->
+
+<p>The slope <span symbol>m</span> in a right-angled triangle can be derived directly from the given angle <span symbol>&alpha;:</span></p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(3)</mtext>
+<mi>m</mi><mo>=</mo><mo>&minus;</mo><mfrac><mi>&Delta;y</mi><mi>&Delta;x</mi></mfrac><mo>=</mo><mo>tan</mo><mi>&alpha;</mi>
+</math></div></div>
+
+<p>The negative of the quotient must be used because the user space is different from the SVG viewbox space.</p>
+
+<p>The offset <math><mi>b</mi></math> is the y-coordinate <math><msub><mi>b</mi><mi>y</mi></msub></math> of the point <math><mi>B</mi></math> and can be derived from the given reference point <math><mi>R</mi></math>:</p>
+
+<figure><figcaption class="figure">Finding B</figcaption><svg width="300" height="200" viewBox="-150, -150, 300, 200" boxed text-anchor="middle" dominant-baseline="middle" font-size="18px" overflow="visible" stroke="black">
+
+<g name="viewbox-axes" marker-end="url(#arrowHead)">
+	<line x1="-150" x2="150" y1="0" y2="0"/>
+	<line x1="0" x2="0" y1="-150" y2="50"/>
+	</g>
+
+<g name="axis-line" stroke="green" alpha="25.41">
+	<line x1="-116" y1="-0" x2="80" y2="-94"/>
+	</g>
+
+<path name="angle-arc" stroke="green" fill="none" marker-end="url(#angleHead)" d="M -66 0 a 50 50 25 0 0 -4.84 -21.45 "/>
+<text x="-50" y="-15" fill	="green">&alpha;</text>
+
+<path name="angle-arc" stroke="green" fill="none" marker-end="url(#angleHead)" d="M 30 -94 a 50 50 25.62 0 0 4.84 21.45"/>
+<text x="17" y="-80" fill	="green">&alpha;</text>
+
+<g name="dashed-lines" stroke-dasharray="4,4">
+	<line stroke="black" x1="-15" y1="-56" y2="-56"/>
+	<line stroke="black" x1="80" x2="80" y1="-96" y2="15"/>
+	<line stroke="black" x1="80" x2="-15" y1="-96" y2="-96"/>
+	</g>
+
+<g name="points" fill="white">
+	<circle name="origin" r="5"/>
+	<circle name="R" cx="80" cy="-94" r="5"/>
+	<circle name="B" cy="-56" r="5"/>
+	<circle name="A" cx="-116" r="5"/>
+	<circle name="H" cx="0" cy="-96" r="5"/>
+	</g>
+
+<g name="point-labels">
+	<text x="15" y="15">O</text>
+	<text x="100" y="-100">R</text>
+	<text x="-126" y="-15">A</text>
+	<text x="15" y="-40">B</text>
+	<text x="15" y="-112">H</text>
+	<text x="-30" y="-65">y<tspan sub>b</tspan></text>
+	<text x="80" y="20">x<tspan sub>r</tspan></text>
+	<text x="-25" y="-97">y<tspan sub>r</tspan></text>
+	</g>
+
+</svg></figure> <!--Finding B-->
+
+<p>The angle &alpha; appears also in the triangle <math><mi overline>HRB</mi></math>, so we can use the tangens once more:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(4)</mtext>
+<mo>tan</mo><mi>&alpha;</mi><mo>=</mo><mo>&minus;</mo><mfrac><mi>&Delta;y</mi><mi>&Delta;x</mi></mfrac>
+<mo>=</mo><mo>&minus;</mo><mfrac><mrow><msub><mi>y</mi><mi>r</mi></msub><mo>&minus;</mo><msub><mi>y</mi><mi>b</mi></msub></mrow><msub><mi>x</mi><mi>r</mi></msub></mfrac>
+<mo>=</mo><mi>m</mi>
+</math></div></div>
+
+<p>We solve for <math><msub><mi>y</mi><mi>b</mi></msub></math> and obtain the desired <math><mi>b</mi></math>:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(5)</mtext>
+<msub><mi>y</mi><mi>b</mi></msub><mo>=</mo><msub><mi>y</mi><mi>r</mi></msub><mo>&minus;</mo><msub><mi>x</mi><mi>r</mi></msub><mo>tan</mo><mi>&alpha;</mi><mo>=</mo><mi>b</mi>
+</math></div></div>
+
+<p>Now all parameters of the line equation (2) are known, and we can use it to find the intersection points with the viewbox borders.</p>
+
+<!-- h3 -- Point Angle Method --></div>
+
+<h3 cbc>Two Points Method</h3><div>
+
+<p>Method 2 allows to define a line with two reference points <math><msub><mi>R</mi><mn>1</mn></msub></math>, <math><msub><mi>R</mi><mn>2</mn></msub></math>. The second point is optional and defaults to the viewbox origin. We can calculate <math><mi>m</mi></math> as:</p>
+
+ <div class="math"><div><math display="block">
+<mtext eq-label>(6)</mtext>
+<mi>m</mi><mo>=</mo><mfrac><mi>&Delta;y</mi><mi>&Delta;x</mi></mfrac>
+<mo>=</mo><mfrac><mrow><mo>(</mo><msub><mi>y</mi><mn>2</mi></msub><mo>&minus;</mo><msub><mi>y</mi><mn>1</mi></msub><mo>)</mo></mrow><mrow><mo>(</mo><msub><mi>x</mi><mn>2</mi></msub><mo>&minus;</mo><msub><mi>x</mi><mn>1</mi></msub><mo>)</mo></mrow></mfrac>
+</math></div></div>
+
+<p>To obatin <math><mi>b</mi></math>,  we insert one of the points <math><msub><mi>P</mi><mi>n</mi></msub></math> into the equations:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(7)</mtext>
+<mtable rows-separated left-aligned><mtr><mtd>
+	<msub><mi>y</mi><mn>1</mn></msub><mo>=</mo><mi>m</mi><mspace/><msub><mi>x</mi><mn>1</mn></msub><mo>&plus;</mo><mn>b</mn>
+</mtd></mtr><mtr><mtd>
+	<mi>b</mi><mo>=</mo><mfrac displaystyle="true"><msub><mi>y</mi><mn>1</mn></msub><mrow><mi>m</mi><mspace/><msub><mi>x</mi><mn>1</mn></msub></mrow></mfrac>
+</mtd></mtr></mtable>
+</math></div></div>
+ 
+<!-- h3 -- Two Points Method --></div>
+
+<h2 cbc>Calculate Intersection Points</h2><div>
+
+<p>At this point, the parameters <math><mi>m</mi></math> and <math><mi>b</mi></math> are known, so we can use equation (2) and set <math><mi>x</mi><mo>=</mo><msub><mi>x</mi><mi>max</mi></msub></math> to obtain the <math><mi>y</mi></math> coordinate of the intersection of the line with the right-hand side viewbox border. The intersection points with the left, upper and lower viewbox borders are calculated accordingly:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(8)</mtext>
+<mtable left-aligned rows-separated displaystyle="true"><mtr><mtd>
+
+<mi>y</mi><mo>=</mo><mi>m</mi><mo>&thinsp;</mo><msub><mi>x</mi><mi>max</mi></msub><mo>+</mo><mi>b</mi>
+
+</mtd><mtd>
+
+<mo>&emsp;|&emsp;</mo><msub><mi>y</mi><mi>min</mi></msub><mo>&le;</mo><mi>y</mi><mo>&le;</mo><msub><mi>y</mi><mi>max</mi></msub>
+
+</mtd></mtr><mtr><mtd>
+
+	<mi>y</mi><mo>=</mo><mi>m</mi><mo>&thinsp;</mo><msub><mi>x</mi><mi>min</mi></msub><mo>+</mo><mi>b</mi>
+
+</mtd><mtd>
+
+	<mo>&emsp;|&emsp;</mo><msub><mi>y</mi><mi>min</mi></msub><mo>&le;</mo><mi>y</mi><mo>&le;</mo><msub><mi>y</mi><mi>max</mi></msub>
+
+</mtd></mtr><mtr><mtd>
+
+<mi>x</mi><mo>=</mo><mfrac><mrow><msub><mi>y</mi><mi>min</mi></msub><mo>&minus;</mo><mi>b</mi></mrow><mi>m</mi></mfrac>
+
+</mtd><mtd>
+
+<mo>&emsp;|&emsp;</mo><msub><mi>x</mi><mi>min</mi></msub><mo>&le;</mo><mi>x</mi><mo>&le;</mo><msub><mi>x</mi><mi>max</mi></msub>
+
+</mtd></mtr><mtr><mtd>
+
+<mi>x</mi><mo>=</mo><mfrac><mrow><msub><mi>y</mi><mi>max</mi></msub><mo>&minus;</mo><mi>b</mi></mrow><mi>m</mi></mfrac>
+
+</mtd><mtd>
+
+<mo>&emsp;|&emsp;</mo><msub><mi>x</mi><mi>min</mi></msub><mo>&le;</mo><mi>x</mi><mo>&le;</mo><msub><mi>x</mi><mi>max</mi></msub>
+
+</mtd></mtr></mtable>
+</math></div></div>
+
+<p>The terms behind the equations are the conditions for a valid result. If the value is outside of the viewbox area (min and max values), the result is invalid. Otherwise, we found a valid point (e. g. <math><mi>P</mi><mo>(</mo><msub><mi>x</mi><mi>max</mi></msub><mo>,</mo><mi>y</mi><mo>)</mo></math>).</p>
+
+<!-- h3 -- Calculate Intersection Points --></div>
+
+<h3 cbc>Axis Orientation Angle</h3><div>
+
+<p>The two-point method produces a slope value <math><mi>m</mi><mo>=</mo><mo>tan</mo><mi>&alpha;</mi></math>, but only in the range from &minus;90 to +90 degrees, not the complete orientation angle in the range from 0 to 360 degrees. So we have to take the sign of  <math><mi>&Delta;x</mi></math> and <math><mi>&Delta;y</mi></math> into account. Let's illustrate that with an example:</p>
+
+<figure><figcaption class="table">Axis orientation angle table</figcaption>
+<table class="flat-borders"><colgroup/><thead><tr>
+	<td>&Delta;x</td>
+	<td>&Delta;y</td>
+	<td>tan &alpha;</td>
+	<td>&alpha;</td>
+	<td>Correction</td>
+	<td>Result</td>
+</tr></thead><tbody><tr>
+	<td>+2</td>
+	<td>&minus;1</td>
+	<td>&minus;0.5</td>
+	<td>&minus;26</td>
+	<td><math><mn>360</mn><mo>&minus;</mo><mi>&alpha;</mi></math></td>
+	<td>+26</td>
+</tr><tr>
+	<td>&minus;2</td>
+	<td>&minus;1</td>
+	<td>+0.5</td>
+	<td>+26</td>
+	<td><math><mn>180</mn><mo>&minus;</mo><mi>&alpha;</mi></td>
+	<td>+154</td>
+</tr><tr>
+	<td>&minus;2</td>
+	<td>+1</td>
+	<td>&minus;0.5</td>
+	<td>&minus;26</td>
+	<td><math><mn>180</mn><mo>&minus;</mo><mi>&alpha;</mi></td>
+	<td>+206</td>
+</tr><tr>
+	<td>+2</td>
+	<td>+1</td>
+	<td>+0.5</td>
+	<td>+26</td>
+	<td><math><mn>360</mn><mo>&minus;</mo><mi>&alpha;</mi></td>
+	<td>+244</td>
+</tr></tbody></table>
+</figure>
+
+<p>So we can use the sign of &Delta;x to decide which correction value has to be used.</p>
+
+<!-- h3 -- Calculate Orientation Angle --></div>
+
+<h3 cbc>Assign Start and End Points</h3><div>
+
+<p>The equations (8) yielded two intersection points which must be assigned to the start and end points of the axis. This can be done with the help of the axis orientation angle.</p>
+
+<figure><figcaption class="listing">Assigning start and end points</figcaption><pre>
+if (alpha > 45 and alpha < 135 
+or alpha > 225 and alpha < 315) {
+	if ( P2.y < P1.y ) {
+		startPoint = P1;
+		endPoint = P2;
+		}
+	else {
+		startPoint = P2;
+		endPoint = P1;
+		}
+else {
+	if ( P2.x > P1.x ) {
+		startPoint = P1;
+		endPoint = P2;
+		}
+	else {
+		startPoint = P2;
+		endPoint = P1;
+		}
+	}
+</pre></figure>
+
+<p>The algorithm takes into account that near horizontal lines might pose accuracy problems with the y coordinates. Similarly, x coordinates might be inaccurate for near vertical lines. Therefore we have chosen to switch between coordinate sets at multiple of 45 degree angles.</p>
+
+<!-- h3 -- Assign Start and End Points --><!div>
+
+<!-- h2 Definition of Function Space Axes --></div>
+
+<h2 cbc>Projection from Function to Viewbox Space</h2><div>
+
+<p>Consider to find the point <math><mi>P3</mi></math> for the value <math><msub><mi>v</mi><mn>3</mn></msub></math> on the axis <math><mi overline>P1P2</mi></math>, which represents the value range <math><mo>[</mo><msub><mi>v</mi><mn>min</mn></msub><mo>,</mo><msub><mi>v</mi><mn>max</mn></msub><mo>]</mo></math>:</p>
+
+<figure><figcaption class="figure">Space transformation</figcaption>
+<svg width="300" height="200" viewBox="-100, -120, 300, 200" boxed text-anchor="middle" dominant-baseline="middle" font-size="18px" overflow="visible" stroke="black">
+
+<g name="axes" fill="none">
+	<line x1="-100" y1="20" x2="200" y2="-40"/>
+	<line x1="-100" y1="20" x2="220" y2="20"/>
+	<line x1="200" y1="40" x2="200" y2="-40"/>
+	<line x1="200" y1="-40" x2="220" y2="-40"/>
+	<line x1="-100" y1="20" x2="-100" y2="40"/>
+	<path d="M -100 20 l -4 -20 M 200 -40 l -4 -20 M 50 -10 l -4 -20"/>
+	</g>
+
+<g name="labels" stroke="none">
+	<text x="-120" y="20">P1</text>
+	<text x="220" y="-60">P2</text>
+	<text x="230" y="20">y<tspan sub>1</tspan></text>
+	<text x="230" y="-40">y<tspan sub>2</tspan></text>
+	<g transform="translate(200,45)">
+		<rect x="-10" y="-8" width="20" height="22" fill="white"/>
+		<text>x<tspan sub>2</tspan></text>
+		</g>
+	<g transform="translate(-100,45)">
+		<rect x="-10" y="-8" width="20" height="22" fill="white"/>
+		<text>x<tspan sub>1</tspan></text>
+		</g>
+	<g transform="translate(-110,-18)">
+		<rect x="-10" y="-8" width="20" height="22" fill="white"/>
+		<text>v<tspan sub>min</tspan></text>
+		</g>
+	<g transform="translate(185,-80)">
+		<rect x="-18" y="-8" width="36" height="22" fill="white"/>
+		<text>v<tspan sub>max</tspan></text>
+		</g>
+	<text x="30" y="-20">P3</text>
+	<text x="48" y="-45">v<tspan sub>3</tspan></text>
+	</g>
+
+<g name="points" fill="white">
+	<circle name="P3" cx="50" cy="-10" r="5"/>
+	<circle name="P1" cx="-100" cy="20" r="5"/>
+	<circle name="P2" cx="200" cy="-40" r="5"/>
+	</g>
+</svg></figure> <!--Space transformation-->
+
+<p>The following steps have to be taken:</p>
+
+<ol>
+<li>Find the distance <math><mi>d</mi></math> from the axis endpoint <math><mi>P1</mi></math> to the point <math><mi>P3</mi></math>  in viewbox units.</li>
+<li>Calculate the associated viewbox x and y coordinates</li>
+</ol>
+
+<p>The start and end points <math><mi>P1</mi></math> and <math><mi>P2</mi></math> define the length of the axis line in viewbox coordinates:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(9)</mtext>
+<mi>l</mi><mo>=</mo><msqrt><mrow><msup>
+<mrow><mo>(</mo><msub><mi>x</mi><mn>2</mn></msub><mo>&minus;</mo><msub><mi>x</mi><mn>1</mn></msub><mo>)</mo></mrow><mn>2</mn></msup>
+<mo>+</mo>
+<msup>
+<mrow><mo>(</mo><msub><mi>y</mi><mn>2</mn></msub><mo>&minus;</mo><msub><mi>y</mi><mn>1</mn></msub><mo>)</mo></mrow><mn>2</mn></msup>
+</mrow></msqrt>
+</math></div></div>
+
+<p>The user supplies the value range in functions space units <math><mo>[</mo><msub><mi>v</mi><mi>min</mi></msub><mo>,</mo><msub><mi>v</mi><mi>max</mi></msub><mo>]</mo></math> for the axis. With these values we can calculate the scaling factor s for the projection of a value <math><mi>v3</mi></math> onto the axis line:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(10)</mtext>
+<mi>s</mi><mo>=</mo><mfrac><mi>l</mi><mrow><msub><mi>v</mi><mi>max</mi></msub><mo>&minus;</mo><msub><mi>v</mi><mi>min</mi></msub></mrow></mfrac>
+</math></div></div>
+
+<p>The next step determines the distance <math><mi>d</mi></math> of the value <math><mi>v</mi></math> at <math><mi>P3</mi></math> from the axis end point <math><mi>P1</mi></math>:</p>
+
+<figure><figcaption class="figure">Projecting v into viewbox space</figcaption><svg width="300" height="200" viewBox="-50, -150, 300, 200" boxed text-anchor="middle" dominant-baseline="middle" font-size="18px" overflow="visible" stroke="black">
+
+<g name="lines" fill="none">
+	<path d="M 0 -140 v 160"/>
+	<path d="M -20 0 h 260"/>
+	<path d="M 0 0 l 230 -120"/>
+	<path d="M -20 -110 h 230 v 130 "/>
+	<path d="M 0 0 l 11 20 M 209 -112 l 11 20"/>
+	</g>
+
+<g name="labels">
+	<text x="15" y="-20">P1</text>
+	<text x="-30" y="0">y<tspan sub>1</tspan></text>
+	<text x="0" y="30">x<tspan sub>1</tspan></text>
+	<text x="200" y="-125">P3</text>
+	<text x="-30" y="-115">y<tspan sub>3</tspan></text>
+	<text x="212" y="30">x<tspan sub>3</tspan></text>
+	<text x="40" y="-10">&alpha;</text>
+	<g transform="translate(100,-50)">
+		<rect x="-10" y="-10" width="20" height="20" stroke="none" fill="white"/>
+		<text>d</text>
+		</g>
+	<text x="28" y="26">r<tspan sub>min</tspan></text>
+	<text x="222" y="-85">v</text>
+	</g>
+
+<g name="points" fill="white">
+	<circle r="5"/>
+	<circle cx="210" cy="-110" r="5"/>
+	</g>
+
+</svg></figure> <!--Projecting v into viewbox space-->
+
+<p>The point <math><mi>P1</mi></math> is associated with the range value <math><msub><mi>v</mi><mn>min</mn></msub></math>. In function space, the distance <math><mi>d</mi></math> is <math><mi>v</mi></math> &minus; <math><msub><mi>v</mi><mn>min</mn></msub></math>. This must be transformed to viewbox space with the scaling factor <math><mi>s</mi></math>:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(11)</mtext>
+<mi>d</mi><mo>=</mo><mo>(</mo><mi>v</mi><mo>&minus;</mo><msub><mi>v</mi><mi>min</mi></msub><mo>)</mo><mo>&sdot;</mo><mi>s</mi>
+</math></div></div>
+
+<p>Then we can calculate the coordinates of point <math><mi>P3</mi></math>, which is associated with the value <math><mi>v</mi></math>:</p>
+
+<div class="math"><div><math display="block">
+<mtext eq-label>(12)</mtext>
+<mtable rows-separated left-aligned><mtr><mtd>
+
+<msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><mi>d</mi><mo>cos</mo><mi>&alpha;</mi>
+
+</mtd></mtr><mtr><mtd>
+
+<msub><mi>y</mi><mn>3</mn></msub><mo>=</mo><mi>d</mi><mo>sin</mo><mi>&alpha;</mi>
+
+</mtd></mtr></mtable>
+</math></div></div>
+
+<!--h2--></div>
+
+</main><footer id="page-footer"></footer>
+<script type="module" src="/inc/page.js" ></script>
+
+<script type="module" >
+import { initPage } from "/inc/svg/svg-context-color-fix.js" ;
+initPage( ) ;
+</script><!-- Fix marker context colors -->
+
+<svg name="arrow-head-definitions" width="0" height="0">
+<defs>
+	<polygon id="arrowShape" points="0 0 16 4 0 8" />
+	<marker id="arrowHead" markerUnits="userSpaceOnUse" overflow="visible" refX="16" refY="4" orient="auto-start-reverse" fill="context-stroke" stroke="context-stroke" >
+		<use href="#arrowShape" />
+		</marker>
+	<polygon id="angleHeadShape" points="0 0 10 3 0 6"/>
+	<marker id="angleHead" markerUnits="userSpaceOnUse" overflow="visible" refX="10" refY="3" orient="auto-start-reverse" fill="context-stroke" stroke="none" >
+		<use href="#angleHeadShape" />
+		</marker>
+	</defs>
+</svg> <!-- Arrowhead definitions -->
+
+</body></html>
