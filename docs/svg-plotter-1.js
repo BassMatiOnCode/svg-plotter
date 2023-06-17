@@ -118,12 +118,16 @@ export class Plotter {
 		// distance : Distance between tickmars in real-world coordinates
 		// length, length1, length2 : Overall, right and left hand side length of tickmarks in pixels
 		// marginStart, marginEnd : Areas near the axis ends are spared out
+		// toggleValue : Enables exchange of lenght1 and length2 at the toggleValue point. Useful for half-side tickmarks.
+		let toggle = false;
 			// Setup tickmark length parameters.
-		if ( options.length === options.length1 === options.length2 === undefined ) options.length = 6 ;
-		if ( options.length ) {
-			options.length1 = options.length / 2 ;
-			options.length2 = options.length1 ;
-			}
+		if ( options.length === options.length1 === options.length2 === undefined ) options.length1 = options.length2 = 6 ;
+		else if ( options.length ) options.length1 = options.length2 = options.length / 2 ;
+		if ( options.length1 === undefined ) options.length1 = 0;
+		if ( options.length2 === undefined ) options.length2 = 0;
+			// ToggleLength
+		if ( options.toggleValue === undefined ) options.toggleValue = 0;
+		else toggle = true;
 			// Setup tickmark margin parameters
 		if ( options.marginStart === undefined ) options.marginStart = 10 ;
 		if ( options.marginEnd === undefined ) options.marginEnd = 20 ;
@@ -141,15 +145,21 @@ export class Plotter {
 				const cy = +axis.line.y1.baseVal.value - (v - axis.vmin) * axis.scalingFactor * axis.sinx ;
 					// Calculate tickmark line end points
 				const p1x = cx - options.length1 * axis.sinx ;
-				const p1y = cy - options.length2 * axis.cosx ;
-				const p2x = cx + options.length1 * axis.sinx ;
+				const p1y = cy - options.length1 * axis.cosx ;
+				const p2x = cx + options.length2 * axis.sinx ;
 				const p2y = cy + options.length2 * axis.cosx ;
 					// create the line
 				const line = svgtools.line( p1x, p1y, p2x, p2y, options.lineAttributes );
 				this.axesGroupElement.appendChild( line );
 				}
 				// next tickmark
-			v += options.distance ;
+			const oldv = v ;
+			v += options.distance;
+			if ( toggle && oldv <= options.toggleValue && v > options.toggleValue ) {
+				const t = options.length1 ;
+				options.length1 = options.length2 ;
+				options.length2 = t ;
+				} ;
 			}
 		}
 	}
