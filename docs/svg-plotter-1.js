@@ -86,6 +86,10 @@ export class Plotter {
 			if ( intersectionPoints[ 0 ].x > intersectionPoints[ 1 ].x ) domhelper.swap( intersectionPoints, 0, 1 );
 			}
 		else throw createError( "calculateCoordinates", "Angle out of range" );
+			// Create axis group element
+		const axisGroupElement = svgtools.createElement("g", { name: name } ) ;
+		this.axesGroupElement.appendChild( axisGroupElement );
+
 			// Create the axis line element
 		const line = axis.line = document.createElementNS( svgtools.svgNameSpace, "line" );
 		options.lineAttributes.x1 =  intersectionPoints[ 0 ].x ;
@@ -95,7 +99,7 @@ export class Plotter {
 		options.lineAttributes.fill = "none" ;
 		options.lineAttributes["marker-end"] = "url(#arrowHead)" ;
 		domhelper.setAttributes( line, options.lineAttributes ) ;
-		this.axesGroupElement.appendChild( line );
+		axisGroupElement.appendChild( line );
 			// Store additional properties
 		axis.vmax = vmax ;
 		axis.vmin = vmin ;
@@ -107,32 +111,51 @@ export class Plotter {
 		if ( options.tickmarks ) {
 			if ( ! options.tickmarks.lineAttributes ) options.tickmarks.lineAttributes = { } ;
 			if ( options.tickmarks.lineAttributes.stroke === undefined && options.lineAttributes.stroke !== undefined ) options.tickmarks.lineAttributes.stroke = options.lineAttributes.stroke ;
-			this.createTickmarks( axis, options.tickmarks );
+			this.createTickmarks( axis, axisGroupElement, options.tickmarks );
 			}
 			// Return a plotter reference for chaining
 		return this ;
 		}
-	createTickmarks ( axis, options ) {
+	createTickmarks ( axis, axisGroupElement, options ) {
 		// axis : axis object reference
 		// options : Additional parameters with the following members:
 		// distance : Distance between tickmars in real-world coordinates
 		// length, length1, length2 : Overall, right and left hand side length of tickmarks in pixels
 		// marginStart, marginEnd : Areas near the axis ends are spared out
 		// toggleValue : Enables exchange of lenght1 and length2 at the toggleValue point. Useful for half-side tickmarks.
-		let toggle = false;
+		// labelDistance1, labelDistance2 : determines the position of tickmark labels above and below the tickmark lines
+		// textAttributes : Attribute object for the label text.
+
+			// Create the tickmark group object
+		const tickmarksGroupElement = svgtools.createElement( "g", options.lineAttributes );
+		tickmarksGroupElement.setAttribute( "name" , "tickmarks" );
+		axisGroupElement.appendChild( tickmarksGroupElement );
+		let labelsGroupElement;
 			// Setup tickmark length parameters.
 		if ( options.length === options.length1 === options.length2 === undefined ) options.length1 = options.length2 = 6 ;
 		else if ( options.length ) options.length1 = options.length2 = options.length / 2 ;
 		if ( options.length1 === undefined ) options.length1 = 0;
 		if ( options.length2 === undefined ) options.length2 = 0;
-			// ToggleLength
-		if ( options.toggleValue === undefined ) options.toggleValue = 0;
-		else toggle = true;
-			// Setup tickmark margin parameters
+			// Toggle tickmark length
+		const toggle = options.toggleValue !== undefined ;
+			// labelDistance
+		const labels = options.labelDistance1 !== undefined || options.labelDistance2 !== undefined ;
+		if ( labels ) {
+			if ( options.labelDistance1 === undefined ) options.labelDistance1 = options.labelDistance2 ;
+			if ( options.labelDistance2 === undefined ) options.labelDistance2 = options.labelDistance1 ;
+			labelsGroupElement = svgtools.createElement( "g", options.labelAttributes );
+			labelsGroupElement.setAttribute( "name" , "labels" );
+			axisGroupElement.appendChild( labelsGroupElement );
+			}
+			// Setup tickmark margin parameters (pixels)
 		if ( options.marginStart === undefined ) options.marginStart = 10 ;
 		if ( options.marginEnd === undefined ) options.marginEnd = 20 ;
+			// Convert to function space units
 		const marginStart = options.marginStart / axis.scalingFactor ;
 		const marginEnd = options.marginEnd /axis.scalingFactor ;
+			// Label spareout range
+		if ( options.spareMin === undefined ) options.spareMin = 0;
+		if ( options.spareMax === undefined ) options.spareMax = 0;
 			// Lowest possible tickmark value
 		let v = Math.trunc( axis.vmin / options.distance ) * options.distance ;
 		while ( v < axis.vmax ) {
@@ -140,25 +163,39 @@ export class Plotter {
 			if ( v >= axis.vmin + marginStart && v <= axis.vmax - marginEnd ) {
 					// Calculate center point.
 				const cx = axis.line.x1.baseVal.value + (v - axis.vmin) * axis.scalingFactor * axis.cosx ;
-					// Attention here: user space axis is bottom up!
-					// Therefore the minus
+					// Attention here: user space axis is bottom up! Therefore the minus.
 				const cy = +axis.line.y1.baseVal.value - (v - axis.vmin) * axis.scalingFactor * axis.sinx ;
+
 					// Calculate tickmark line end points
 				const p1x = cx - options.length1 * axis.sinx ;
 				const p1y = cy - options.length1 * axis.cosx ;
 				const p2x = cx + options.length2 * axis.sinx ;
-				const p2y = cy + options.length2 * axis.cosx ;
-					// create the line
+				const p2y = cy + options.length2 * axis.cosx
+					// Create the line
 				const line = svgtools.line( p1x, p1y, p2x, p2y, options.lineAttributes );
-				this.axesGroupElement.appendChild( line );
+				tickmarksGroupElement.appendChild( line );
+
+					// Tickmark label
+				if ( labels && ( v < ( options.spareMin - 1e-6 )  || v > ( options.spareMax + 1e-6 ))) {
+					const x = cx + options.labelDistance1 * axis.sinx ;
+					const y = cy - options.labelDistance1 * axis.cosx ;
+					const text = svgtools.text( x, y, v.toFixed( 2 ) );
+					labelsGroupElement.appendChild( text );
+					}
 				}
+
 				// next tickmark
 			const oldv = v ;
 			v += options.distance;
 			if ( toggle && oldv <= options.toggleValue && v > options.toggleValue ) {
-				const t = options.length1 ;
+					// Swap tickmark lengths
+				let t = options.length1 ;
 				options.length1 = options.length2 ;
 				options.length2 = t ;
+					// Swap label distances
+				t = options.labelDistance1 ;
+				options.labelDistance1 = options.labelDistance2 ;
+				options.labelDistance2 = t ;
 				} ;
 			}
 		}

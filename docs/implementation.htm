@@ -110,7 +110,7 @@
 
 <!-- h2 -- About Coordinate Systems --></div>
 
-<h2 cbc>Definition of Function Space Axes</h2><div>
+<h2 cbc>Function Space Axes</h2><div>
 
 <p>An author should have two methods define a diagram axis:</p>
 
@@ -274,7 +274,7 @@
  
 <!-- h3 -- Two Points Method --></div>
 
-<h2 cbc>Calculate Intersection Points</h2><div>
+<h3 cbc>Calculate Intersection Points</h3><div>
 
 <p>At this point, the parameters <math><mi>m</mi></math> and <math><mi>b</mi></math> are known, so we can use equation (2) and set <math><mi>x</mi><mo>=</mo><msub><mi>x</mi><mi>max</mi></msub></math> to obtain the <math><mi>y</mi></math> coordinate of the intersection of the line with the right-hand side viewbox border. The intersection points with the left, upper and lower viewbox borders are calculated accordingly:</p>
 
@@ -366,7 +366,7 @@
 
 <!-- h3 -- Calculate Orientation Angle --></div>
 
-<h3 cbc>Assign Start and End Points</h3><div>
+<h3 cbc>Start and End Point Assignments</h3><div>
 
 <p>The equations (8) yielded two intersection points which must be assigned to the start and end points of the axis. This can be done with the help of the axis orientation angle.</p>
 
@@ -399,7 +399,7 @@ else {
 
 <!-- h2 Definition of Function Space Axes --></div>
 
-<h2 cbc>Projection from Function to Viewbox Space</h2><div>
+<h3 cbc>Projection from Function to Viewbox Space</h3><div>
 
 <p>Consider to find the point <math><mi>P3</mi></math> for the value <math><msub><mi>v</mi><mn>3</mn></msub></math> on the axis <math><mi overline>P1P2</mi></math>, which represents the value range <math><mo>[</mo><msub><mi>v</mi><mn>min</mn></msub><mo>,</mo><msub><mi>v</mi><mn>max</mn></msub><mo>]</mo></math>:</p>
 
@@ -530,6 +530,31 @@ else {
 </mtd></mtr></mtable>
 </math></div></div>
 
+<!--h2--></div>
+
+<h3 cbc>Half-Tickmarks Toggle Feature</h3><div>
+
+<p>Tickmark lenght is controlled though the <tt>length1</tt> and <tt>length2</tt> parameters, the length above and below the axis line. Setting one side is set to zero has a nice effect, giving more room to the graph values. Sometimes it is desireable to have some range where the  Setting the <tt>toggleValue</tt> divides the axis into two ranges. When the tickmarks are generated, the parameters <tt>length1</tt> and <tt>length2</tt> are exchanged. This has the following effect:</p>
+
+<figure><figcaption class="figure">Toggle Tickmarks Features</figcaption>
+<svg id="svg-01" width="300" height="100" viewBox="-100,-50,300,100" style="border:1px solid silver">
+<g id="axes" stroke="black">
+	<line stroke="red" x1="-100" y1="0" x2="200" y2="0" fill="none" marker-end="url(#arrowHead)"></line><line stroke="red" x1="-83.33333333333334" y1="-10" x2="-83.33333333333334" y2="0"></line>
+	<line stroke="red" x1="-50.00000000000001" y1="-10" x2="-50.00000000000001" y2="0"></line><line stroke="red" x1="-16.66666666666667" y1="-10" x2="-16.66666666666667" y2="0"></line><line stroke="red" x1="16.666666666666657" y1="0" x2="16.666666666666657" y2="10"></line><line stroke="red" x1="50" y1="0" x2="50" y2="10"></line><line stroke="red" x1="83.33333333333334" y1="0" x2="83.33333333333334" y2="10"></line><line stroke="red" x1="116.66666666666666" y1="0" x2="116.66666666666666" y2="10"></line><line stroke="red" x1="150" y1="0" x2="150" y2="10"></line>
+	</g>
+<g id="points" stroke="black" fill="white">
+	<circle name="viewbox-origin" r="5"></circle>
+	</g>
+</svg> <!--Toggle Tickmarks Features-->
+</figure>
+
+<!--h3--></div>
+
+<h3 cbc>Tickmark Labels</h3><div>
+
+<p>Tickmark labels are created with the tickmarks.</p>
+
+<!--h3--></div>
 <!--h2--></div>
 
 </main><footer id="page-footer"></footer>

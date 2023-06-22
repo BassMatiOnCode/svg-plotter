@@ -34,7 +34,7 @@
 </svg> <!--SVG Marker Definitions-->
 
 
-<svg id="svg-01" width="300" height="200" viewBox="-100,-100,300,200" style="border:1px solid silver" >
+<svg id="svg-01" width="300" height="200" viewBox="-100,-100,300,200" style="border:1px solid silver" dominant-baseline="middle">
 <g id="axes" xstroke="black"></g>
 <g id="points" stroke="black" fill="white">
 	<circle name="viewbox-origin" r="5" />
@@ -48,9 +48,9 @@
 <script type="module">
 import * as plotter from "./svg-plotter-1.js" ;
 const p = new plotter.Plotter( document.getElementById( "svg-01" ) );
-const x = p.createAxis( "x" , -0.5, 1.3,  { angle: 0, lineAttributes: { stroke : "red" }, tickmarks: { length1: 10, distance: 0.2, toggleValue: 0 } } ) ;
-const y = p.createAxis( "y", -0.4, 0.8,  { angle: 90, lineAttributes: { stroke : "green" }, tickmarks: { length: 10, distance: 0.1 } } ) ;
-const z = p.createAxis( "z", -0.4, 0.8, { R2 : { x: -100, y: 100 }, lineAttributes:{ stroke: "blue" }, tickmarks: { length : 15, distance: 0.1, lineAttributes: { stroke: "black" } } } ) ;
+const x = p.createAxis( "x" , -0.6, 1.2,  { angle: 0, lineAttributes: { stroke : "red" }, tickmarks: { length1: 10, distance: 0.2, toggleValue: 0, labelDistance1: 15, labelDistance2: -20, labelAttributes : { "font-size": "10px", "text-anchor": "middle", stroke: "none" , fill: "black" } } } ) ;
+const y = p.createAxis( "y", -0.5, 0.5,  { angle: 90, lineAttributes: { stroke : "green" }, tickmarks: { length: 10, distance: 0.1, toggleValue: 0, labelDistance1: -20, labelDistance2: 20, labelAttributes : { "font-size": "10px", "text-anchor": "middle", stroke: "none" , fill: "black" } } } ) ;
+// const z = p.createAxis( "z", -0.4, 0.8, { R2 : { x: -100, y: 100 }, lineAttributes:{ stroke: "blue" }, tickmarks: { length : 15, distance: 0.1, lineAttributes: { stroke: "black" } } } ) ;
 </script> <!--SVG Plotter Script-->
 
 <script type="module" >
